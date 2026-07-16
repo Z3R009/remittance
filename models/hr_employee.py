@@ -29,15 +29,21 @@ class HrEmployee(models.Model):
         for rec in self:
             rec.gross_earnings = (rec.wage or 0.0) + (rec.pera or 0.0)
 
-    @api.model_create_multi
-    def create(self, vals_list):
+    @classmethod
+    def create(cls, vals_list):
         employees = super().create(vals_list)
 
-        Compensation = self.env["employee.compensation"]
+        Compensation = employees.env["employee.compensation"]
+        Deduction = employees.env["employee.deduction"]
 
         for employee in employees:
             if not Compensation.search([("employee_id", "=", employee.id)], limit=1):
                 Compensation.create({
+                    "employee_id": employee.id,
+                })
+
+            if not Deduction.search([("employee_id", "=", employee.id)], limit=1):
+                Deduction.create({
                     "employee_id": employee.id,
                 })
 
