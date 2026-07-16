@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="view_employee_compensation_list" model="ir.ui.view">
+        <field name="name">employee.compensation.list</field>
+        <field name="model">employee.compensation</field>
+        <field name="arch" type="xml">
+            <list string="Employee Compensation">
+                <field name="employee_id" />
+                <field name="basic_salary" />
+                <field name="pera" readonly="1" />
+                <field name="gross_earnings" readonly="1" />
+                <field name="withholding_tax" readonly="1" />
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_employee_compensation_form" model="ir.ui.view">
+        <field name="name">employee.compensation.form</field>
+        <field name="model">employee.compensation</field>
+        <field name="arch" type="xml">
+            <form string="Employee Compensation">
+                <sheet>
+
+                    <group>
+                        <field name="employee_id" />
+                    </group>
+
+                    <group string="Compensation">
+                        <field name="basic_salary" readonly="1" />
+                        <field name="pera" readonly="1" />
+                        <field name="gross_earnings" readonly="1" />
+                        <field name="withholding_tax" readonly="1" />
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

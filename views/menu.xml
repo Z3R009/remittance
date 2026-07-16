@@ -1,0 +1,24 @@
+<odoo>
+
+    <!-- Root Menu -->
+    <menuitem
+        id="menu_remittance_root"
+        name="Remittance"
+        sequence="10" />
+
+    <menuitem
+        id="menu_employee_compensation"
+        name="Compensation"
+        parent="menu_remittance_root"
+        action="action_remittance"
+        sequence="1" />
+
+    <!-- <menuitem
+        id="deduction_menu"
+        name="Deduction"
+        parent="remittance_menu_root"
+        action="action_deduction"
+        sequence="30" /> -->
+
+
+</odoo>
