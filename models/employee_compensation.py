@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class EmployeeCompensation(models.Model):
@@ -58,3 +58,19 @@ class EmployeeCompensation(models.Model):
                 self.create({
                     "employee_id": employee.id,
                 })
+
+    @api.model
+    def create(self, vals):
+        """Auto-create deduction when compensation is created"""
+        record = super().create(vals)
+        if record.employee_id:
+            Deduction = self.env['employee.deduction']
+            if not Deduction.search([('employee_id', '=', record.employee_id.id)]):
+                Deduction.create({'employee_id': record.employee_id.id})
+        return record
+    
+    _sql_constraints = [
+        ('unique_employee_compensation', 
+         'unique(employee_id)', 
+         'This employee already has a compensation record!'),
+    ]

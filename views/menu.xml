@@ -3,7 +3,7 @@
     <!-- Root Menu -->
     <menuitem
         id="menu_remittance_root"
-        name="Remittance"
+        name="Payroll and Remittance"
         sequence="10" />
 
     <menuitem

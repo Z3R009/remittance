@@ -1,33 +1,24 @@
 {
-    'name': "Remittance",
-
-    'summary': "Short (1 phrase/line) summary of the module's purpose",
-
+    'name': "Payroll and Remittance",
+    'summary': "Employee Compensation & Deductions",
     'description': """
-Long description of module's purpose
+        Module for managing employee compensation and deductions
+        - Compensation: Basic Salary, PERA, etc.
+        - Deductions: GSIS, HDMF, Other Deductions
     """,
-
-    'author': "My Company",
+    'author': "Your Company",
     'website': "https://www.yourcompany.com",
-
-    
-    'category': 'Uncategorized',
-    'version': '0.1',
-
-    # any module necessary for this one to work correctly
+    'category': 'Human Resources',
+    'version': '1.0',
     'depends': ['base', 'hr'],
-
-    # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/action.xml',
-        'views/menu.xml',
         'views/employee_deduction.xml',
         'views/employee_compensation.xml',
         'views/hr_employee.xml',
+        'views/action.xml',
+        'views/menu.xml',
     ],
-    
     'installable': True,
     'application': True,
 }
-

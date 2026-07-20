@@ -1,7 +1,7 @@
 <odoo>
 
     <record id="action_remittance" model="ir.actions.act_window">
-        <field name="name">Remittance</field>
+        <field name="name">Compensation</field>
         <field name="res_model">employee.compensation</field>
         <field name="view_mode">list,form</field>
     </record>
