@@ -15,6 +15,7 @@
         'security/ir.model.access.csv',
         'views/employee_deduction.xml',
         'views/employee_compensation.xml',
+        'views/employee_take_home_pay.xml',
         'views/hr_employee.xml',
         'views/action.xml',
         'views/menu.xml',

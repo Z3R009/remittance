@@ -1,0 +1,20 @@
+<odoo>
+    <record id="view_take_home_pay_list" model="ir.ui.view">
+        <field name="name">take.home.pay.list</field>
+        <field name="model">take.home.pay</field>
+        <field name="arch" type="xml">
+            <list string="Take Home Pay">
+                <field name="employee_id" />
+                <field name="basic_salary" />
+                <field name="pera" />
+                <field name="gross_earnings" />
+                <field name="total_deductions" />
+                <field name="total_net_take_home_pay" />
+                <field name="total_net_1st" />
+                <field name="total_net_2nd" />
+            </list>
+        </field>
+    </record>
+
+
+</odoo>

@@ -20,5 +20,12 @@
         action="action_employee_deduction"
         sequence="30" />
 
+    <menuitem
+        id="take_home_pay_menu"
+        name="Take Home Pay"
+        parent="menu_remittance_root"
+        action="action_take_home_pay"
+        sequence="40" />
+
 
 </odoo>

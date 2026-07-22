@@ -1,7 +1,13 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_employee_compensation,access_employee_compensation,model_employee_compensation,,1,1,1,0
-access_employee_deduction,access_employee_deduction,model_employee_deduction,,1,1,1,0
+access_employee_compensation,Employee Compensation,model_employee_compensation,,1,1,1,0
+access_employee_deduction,Employee Deduction,model_employee_deduction,,1,1,1,0
+access_take_home_pay,Take Home Pay,model_take_home_pay,,1,1,1,0
+
 access_deduction_type_user,Deduction Type - User,model_deduction_type,base.group_user,1,0,0,0
 access_deduction_type_manager,Deduction Type - Manager,model_deduction_type,base.group_system,1,1,1,0
+
 access_employee_deduction_user,Employee Deduction - User,model_employee_deduction,base.group_user,1,0,0,0
 access_employee_deduction_manager,Employee Deduction - Manager,model_employee_deduction,base.group_system,1,1,1,0
+
+access_take_home_pay_user,Take Home Pay - User,model_take_home_pay,base.group_user,1,0,0,0
+access_take_home_pay_manager,Take Home Pay - Manager,model_take_home_pay,base.group_system,1,1,1,0

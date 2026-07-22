@@ -1,1 +1,1 @@
-from . import models, employee_compensation, employee_deduction, hr_employee, deduction_type
+from . import models, employee_compensation, employee_deduction, hr_employee, deduction_type, take_home_pay

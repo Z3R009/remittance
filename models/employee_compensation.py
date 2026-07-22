@@ -61,16 +61,29 @@ class EmployeeCompensation(models.Model):
 
     @api.model
     def create(self, vals):
-        """Auto-create deduction when compensation is created"""
         record = super().create(vals)
+
         if record.employee_id:
-            Deduction = self.env['employee.deduction']
-            if not Deduction.search([('employee_id', '=', record.employee_id.id)]):
-                Deduction.create({'employee_id': record.employee_id.id})
+            # Create deduction if missing
+            Deduction = self.env["employee.deduction"]
+            deduction = Deduction.search(
+                [("employee_id", "=", record.employee_id.id)],
+                limit=1,
+            )
+            if not deduction:
+                deduction = Deduction.create({
+                    "employee_id": record.employee_id.id,
+                })
+
+            # Create take home pay if missing
+            TakeHome = self.env["take.home.pay"]
+            if not TakeHome.search(
+                [("employee_id", "=", record.employee_id.id)],
+                limit=1,
+            ):
+                TakeHome.create({
+                    "employee_id": record.employee_id.id,
+                    "employee_deduction_id": deduction.id,
+                })
+
         return record
-    
-    _sql_constraints = [
-        ('unique_employee_compensation', 
-         'unique(employee_id)', 
-         'This employee already has a compensation record!'),
-    ]
