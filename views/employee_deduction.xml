@@ -5,7 +5,8 @@
         <field name="name">employee.deduction.list</field>
         <field name="model">employee.deduction</field>
         <field name="arch" type="xml">
-            <list string="Employee Deductions">
+            <list string="Employee Deductions" default_order="payroll_month desc, employee_name asc">
+                <field name="payroll_month" />
                 <field name="employee_name" />
                 <field name="withholding_tax" readonly="1" />
                 <field name="total_gsis" />
@@ -22,12 +23,14 @@
         <field name="model">employee.deduction</field>
         <field name="arch" type="xml">
             <form string="Employee Deductions">
+
                 <sheet>
                     <!-- HEADER with employee name -->
                     <div class="oe_title">
                         <h1>
                             <field name="employee_name" readonly="1" class="oe_inline" />
                         </h1>
+                        <field name="payroll_month" />
                     </div>
 
                     <!-- SUMMARY ROW - Always visible -->
@@ -44,20 +47,151 @@
                         <!-- TAB 1: GSIS -->
                         <page string="GSIS" name="gsis">
                             <group col="2">
-                                <field name="gsis_rlip" />
-                                <field name="gsis_conso_loan" />
-                                <field name="gsis_mpl" />
-                                <field name="gsis_emergency_loan" />
-                                <field name="gsis_computer_loan" />
-                                <field name="gsis_educ_loan" />
-                                <field name="gsis_solar_loan" />
-                                <field name="gsis_policy_loan" />
-                                <field name="gsis_reg_opt" />
-                                <field name="gsis_opt_life_pre" />
-                                <field name="gsis_mpl_lite" />
-                                <field name="gsis_rel" />
-                                <field name="gsis_gfal_2" />
+
+                                <!-- Left Side -->
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_conso_loan" />
+                                            <field name="gsis_conso_loan_paid" />
+                                            <field name="gsis_conso_loan_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_mpl" />
+                                            <field name="gsis_mpl_paid" />
+                                            <field name="gsis_mpl_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_emergency_loan" />
+                                            <field name="gsis_emergency_loan_paid" />
+                                            <field name="gsis_emergency_loan_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_computer_loan" />
+                                            <field name="gsis_computer_loan_paid" />
+                                            <field name="gsis_computer_loan_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_educ_loan" />
+                                            <field name="gsis_educ_loan_paid" />
+                                            <field name="gsis_educ_loan_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_solar_loan" />
+                                            <field name="gsis_solar_loan_paid" />
+                                            <field name="gsis_solar_loan_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_policy_loan_reg" />
+                                            <field name="gsis_policy_loan_reg_paid" />
+                                            <field name="gsis_policy_loan_reg_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_policy_loan_opt" />
+                                            <field name="gsis_policy_loan_opt_paid" />
+                                            <field name="gsis_policy_loan_opt_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_opt_life_pre" />
+                                            <field name="gsis_opt_life_pre_paid" />
+                                            <field name="gsis_opt_life_pre_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_mpl_lite" />
+                                            <field name="gsis_mpl_lite_paid" />
+                                            <field name="gsis_mpl_lite_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="gsis_gfal_2" />
+                                            <field name="gsis_gfal_2_paid" />
+                                            <field name="gsis_gfal_2_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <!-- Right Side -->
+                                <group>
+                                    <field name="gsis_rlip" />
+
+                                    <field name="gsis_rel" />
+
+
+                                </group>
+
                             </group>
+
                             <group>
                                 <field name="total_gsis" readonly="1" widget="monetary" />
                             </group>
@@ -66,11 +200,50 @@
                         <!-- TAB 2: HDMF/PAG-IBIG -->
                         <page string="HDMF/Pag-IBIG" name="hdmf">
                             <group col="2">
-                                <field name="hdmf_cont1" />
-                                <field name="hdmf_mp2" />
-                                <field name="hdmf_mpl" />
-                                <field name="hdmf_calamity_loan" />
-                                <field name="hdmf_housing" />
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="hdmf_mpl" />
+                                            <field name="hdmf_mpl_paid" />
+                                            <field name="hdmf_mpl_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="hdmf_calamity_loan" />
+                                            <field name="hdmf_calamity_loan_paid" />
+                                            <field name="hdmf_calamity_loan_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+
+                                            <field name="hdmf_housing" />
+                                            <field name="hdmf_housing_paid" />
+                                            <field name="hdmf_housing_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <field name="hdmf_cont1" />
+                                    <field name="hdmf_mp2" />
+                                </group>
+
+
                             </group>
                             <group>
                                 <field name="total_hdmf" readonly="1" widget="monetary" />
@@ -80,16 +253,65 @@
                         <!-- TAB 3: OTHER DEDUCTIONS -->
                         <page string="Other Deductions" name="other">
                             <group col="2">
-                                <field name="philhealth" />
-                                <field name="globe" />
-                                <field name="dti_pf_cont" />
-                                <field name="mdbf" />
-                                <field name="dti_pf_loan" />
-                                <field name="dti_eu_dues" />
-                                <field name="lbp_dbp" />
-                                <field name="dti_eu_hmo" />
-                                <field name="amaphil" />
-                                <field name="whc" />
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="dti_pf_loan" />
+                                            <field name="dti_pf_loan_paid" />
+                                            <field name="dti_pf_loan_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="lbp_dbp" />
+                                            <field name="lbp_dbp_paid" />
+                                            <field name="lbp_dbp_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="amaphil" />
+                                            <field name="amaphil_paid" />
+                                            <field name="amaphil_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+                                            <field name="whc" />
+                                            <field name="whc_paid" />
+                                            <field name="whc_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <field name="philhealth" />
+                                    <field name="globe" />
+                                    <field name="dti_pf_cont" />
+                                    <field name="mdbf" />
+                                    <field name="dti_eu_dues" />
+                                    <field name="dti_eu_hmo" />
+                                </group>
+
+
                             </group>
                             <group>
                                 <field name="total_other" readonly="1" widget="monetary" />
@@ -97,20 +319,33 @@
                         </page>
 
                         <!-- TAB 4: NOTES -->
-                        <page string="Notes" name="notes">
+                        <!-- <page string="Notes" name="notes">
                             <field name="notes" />
-                        </page>
+                        </page> -->
                     </notebook>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- ACTION -->
-    <record id="action_employee_deduction" model="ir.actions.act_window">
-        <field name="name">Employee Deductions</field>
-        <field name="res_model">employee.deduction</field>
-        <field name="view_mode">list,form</field>
+    <!-- SEARCH VIEW - Filter/Group by Month -->
+    <record id="view_employee_deduction_search" model="ir.ui.view">
+        <field name="name">employee.deduction.search</field>
+        <field name="model">employee.deduction</field>
+        <field name="arch" type="xml">
+            <search string="Search Deductions">
+                <field name="employee_name" string="Employee" />
+                <field name="payroll_month" />
+                <filter string="This Month" name="this_month"
+                    domain="[('payroll_month','=', context_today().strftime('%Y-%m-01'))]" />
+                <filter string="Last Month" name="last_month"
+                    domain="[('payroll_month','=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]" />
+                <filter string="Employee" name="group_employee" context="{'group_by':'employee_id'}" />
+                <filter string="Payroll Month" name="group_month"
+                    context="{'group_by':'payroll_month:month'}" />
+            </search>
+        </field>
     </record>
+
 
 </odoo>

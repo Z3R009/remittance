@@ -1,0 +1,523 @@
+<odoo>
+
+    <!-- Narrow slip-sized paper, not standard A4 -->
+    <record id="paperformat_payslip" model="report.paperformat">
+        <field name="name">Payslip</field>
+        <field name="default" eval="False" />
+        <field name="format">custom</field>
+        <field name="page_height">210</field>
+        <field name="page_width">95</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">8</field>
+        <field name="margin_bottom">8</field>
+        <field name="margin_left">6</field>
+        <field name="margin_right">6</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <!-- Reusable row: Label | Amount (or "-" if zero) -->
+    <template id="payslip_line">
+        <tr>
+            <td style="padding:1px 4px; font-size:10px;">
+                <t t-esc="label" />
+            </td>
+            <td style="padding:1px 4px; font-size:10px; text-align:right; white-space:nowrap;">
+                <t t-if="value">
+                    <t t-esc="'{:,.2f}'.format(value)" />
+                </t>
+                <t t-else="">-</t>
+            </td>
+        </tr>
+    </template>
+
+    <!-- Main payslip body -->
+    <template id="report_payslip_document">
+        <t t-foreach="docs" t-as="o">
+            <div class="page"
+                style="font-family: Arial, sans-serif; font-size:10px; border:1px solid #000; padding:6px;">
+
+                <div style="text-align:center; line-height:1.2;">
+                    <div style="font-size:10px; margin-top:2px;">Department of Trade and Industry</div>
+                    <div style="font-size:10px; margin-top:2px;">Regional Office 12</div>
+                    <div
+                        style="font-size:12px; font-weight:bold; margin-top:2px; margin-bottom:5px;">PAYROLL
+                        PAYMENT
+                        SLIP</div>
+                </div>
+
+                <table style="width:100%; font-size:10px;">
+                    <tr>
+                        <td style="width:35%;">
+                            <b>Office/Division</b>
+                        </td>
+                        <td>
+                            <t t-esc="o.employee_id.department_id.name or ''" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Pay Period
+                        </td>
+                        <td> FOR THE MONTH OF <t
+                                t-esc="o.payroll_month.strftime('%B %Y').upper()" />
+                        </td>
+                    </tr>
+                </table>
+
+                <hr style="border:0; border-top:2px solid #000;" />
+
+                <table style="width:100%; font-size:10px; margin-top:4px;">
+                    <tr>
+                        <td style="width:35%; ">
+                            Employee's Name
+                        </td>
+                        <td
+                            style="font-size:12px; font-weight:bold; text-transform:uppercase; text-decoration:underline; white-space:nowrap;">
+                            <t t-esc="o.employee_id.name" />
+                        </td>
+                        <td style="width:20%;">
+                            <b>Employee No.</b>
+                        </td>
+                        <td style="text-decoration:underline;">
+                            <t t-esc="o.employee_id.employee_number or ''" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Position
+                        </td>
+                        <td colspan="3"
+                            style="text-decoration:underline; white-space:nowrap; font-size:9px;">
+                            <t t-esc="o.employee_id.job_title or (o.employee_id.job_id.name or '')" />
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="width:100%; border-collapse:collapse; margin-top:6px;">
+
+                    <tr>
+                        <td
+                            style="text-align:left; font-weight:bold; font-size:10px; padding-left:40px; ">
+                            ***Earnings***
+                        </td>
+                        <td
+                            style="font-weight:bold; text-align:right; font-size:10px; padding-right:30px">
+                            Monthly</td>
+                    </tr>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">Salary Basic</t>
+                        <t t-set="value" t-value="o.basic_salary" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">Additional Compensation</t>
+                        <t t-set="value" t-value="0" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">Personal Econ. Relief Allowance</t>
+                        <t t-set="value" t-value="o.pera" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">Others:</t>
+                        <t t-set="value" t-value="0" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:block; padding-left:40px;">
+                                Representation Allowance (RA)
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="0" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:block; padding-left:40px;">
+                                Transportation Allowance (TA)
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="0" />
+                    </t>
+
+                    <tr>
+                        <td style="padding-left:25px; font-size:10px; border-bottom:1px solid #000;">
+                            Gross Earnings
+                        </td>
+                        <td style="text-align:right; font-size:10px; border-bottom:1px solid #000;">
+                            <t t-esc="'{:,.2f}'.format(o.gross_earnings or 0)" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2"
+                            style="text-align:left; font-weight:bold; font-size:10px; padding-left:40px; margin-top:15px;">
+                            ***Deductions***
+                        </td>
+                    </tr>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">BIR Withholding Tax</t>
+                        <t t-set="value" t-value="o.withholding_tax" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">GSIS Contribution</t>
+                        <t t-set="value" t-value="o.gsis_rlip" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="">HDMF - Contribution I</span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.hdmf_cont1" />
+                    </t>
+
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:block; padding-left:40px;">
+                                - Contribution II
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.hdmf_mp2" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">PHIC Contribution</t>
+                        <t t-set="value" t-value="o.philhealth" />
+                    </t>
+
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="">GSIS - Consolidated Loan/MPL</span>
+                                <span style="padding-left:60px;">
+                                    <t t-esc="o.gsis_conso_loan_paid" />/<t
+                                        t-esc="o.gsis_conso_loan_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_conso_loan" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- MPL</span>
+                                <span style="padding-left:140px;">
+                                    <t t-esc="o.gsis_mpl_paid" />/<t
+                                        t-esc="o.gsis_mpl_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_mpl" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- MPLITE</span>
+                                <span style="padding-left:123px;">
+                                    <t t-esc="o.gsis_mpl_lite_paid" />/<t
+                                        t-esc="o.gsis_mpl_lite_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_mpl_lite" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Emergency Loan</span>
+                                <span style="padding-left:82px;">
+                                    <t t-esc="o.gsis_emergency_loan_paid" />/<t
+                                        t-esc="o.gsis_emergency_loan_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_emergency_loan" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Computer Loan</span>
+                                <span style="padding-left:89px;">
+                                    <t t-esc="o.gsis_computer_loan_paid" />/<t
+                                        t-esc="o.gsis_computer_loan_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_computer_loan" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Educational Loan</span>
+                                <span style="padding-left:79px;">
+                                    <t t-esc="o.gsis_educ_loan_paid" />/<t
+                                        t-esc="o.gsis_educ_loan_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_educ_loan" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Solar Loan</span>
+                                <span style="padding-left:111px;">
+                                    <t t-esc="o.gsis_solar_loan_paid" />/<t
+                                        t-esc="o.gsis_solar_loan_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_solar_loan" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Policy Loan (Regular)</span>
+                                <span style="padding-left:62px;">
+                                    <t t-esc="o.gsis_policy_loan_reg_paid" />/<t
+                                        t-esc="o.gsis_policy_loan_reg_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_policy_loan_reg" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Policy Loan (Optional)</span>
+                                <span style="padding-left:58px;">
+                                    <t t-esc="o.gsis_policy_loan_opt_paid" />/<t
+                                        t-esc="o.gsis_policy_loan_opt_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_policy_loan_opt" />
+                    </t>
+
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- OPT Life Premium</span>
+                                <span style="padding-left:76px;">
+                                    <t t-esc="o.gsis_opt_life_pre_paid" />/<t
+                                        t-esc="o.gsis_opt_life_pre_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_opt_life_pre" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:block; padding-left:40px;">- R.E.L.
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_rel" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- GFAL II</span>
+                                <span style="padding-left:128px;">
+                                    <t t-esc="o.gsis_gfal_2_paid" />/<t
+                                        t-esc="o.gsis_gfal_2_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.gsis_gfal_2" />
+                    </t>
+
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="">HDMF: Multi-Purpose Loan</span>
+                                <span style="padding-left:82px;">
+                                    <t t-esc="o.gsis_mpl_paid" />/<t
+                                        t-esc="o.gsis_mpl_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.hdmf_mpl" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Calamity Loan</span>
+                                <span style="padding-left:95px;">
+                                    <t t-esc="o.hdmf_calamity_loan_paid" />/<t
+                                        t-esc="o.hdmf_calamity_loan_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.hdmf_calamity_loan" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- Housing Loan</span>
+                                <span style="padding-left:100px;">
+                                    <t t-esc="o.hdmf_housing_paid" />/<t
+                                        t-esc="o.hdmf_housing_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.hdmf_housing" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">DTI-PF Contribution</t>
+                        <t t-set="value" t-value="o.dti_pf_cont" />
+                    </t>
+
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="">DTI-PF Loan</span>
+                                <span style="padding-left:151px;">
+                                    <t t-esc="o.dti_pf_loan_paid" />/<t
+                                        t-esc="o.dti_pf_loan_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.dti_pf_loan" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">DTI-MDBF Contribution</t>
+                        <t t-set="value" t-value="o.mdbf" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">DTI-EU Monthly Dues</t>
+                        <t t-set="value" t-value="o.dti_eu_dues" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">DTI-HMO</t>
+                        <t t-set="value" t-value="o.dti_eu_hmo" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="padding-left:40px;">- LBP Salary Loan</span>
+                                <span style="padding-left:82px;">
+                                    <t t-esc="o.lbp_dbp_paid" />/<t
+                                        t-esc="o.lbp_dbp_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.lbp_dbp" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">GLOBE</t>
+                        <t t-set="value" t-value="o.globe" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="">WHC</span>
+                                <span style="padding-left:185px;">
+                                    <t t-esc="o.whc_paid" />/<t
+                                        t-esc="o.whc_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.whc" />
+                    </t>
+                    <t t-call="remittance.payslip_line">
+                        <t t-set="label">
+                            <span style="display:flex; justify-content:space-between; width:100%;">
+                                <span style="">Amaphil</span>
+                                <span style="padding-left:169px;">
+                                    <t t-esc="o.amaphil_paid" />/<t
+                                        t-esc="o.amaphil_term" />
+                                </span>
+                            </span>
+                        </t>
+                        <t t-set="value" t-value="o.amaphil" />
+                    </t>
+
+                    <tr>
+                        <td style="text-align:center; font-size:10px; border-bottom:1px solid #000;">
+                            Total Deductions
+                        </td>
+                        <td style="text-align:right; font-size:10px; border-bottom:1px solid #000;">
+                            <t t-esc="'{:,.2f}'.format(o.total_deductions or 0)" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td
+                            style="text-align:left; font-weight:bold; font-size:15px; padding-left:40px; font-style:italic; ">***Net
+                            Pay***</td>
+                        <td style="font-weight:bold; text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(o.total_net_take_home_pay or 0)" />
+                        </td>
+                    </tr>
+
+
+                </table>
+
+                <table style="width:100%; margin-top:8px; font-size:10px;">
+                    <tr>
+                        <td> Amount Due (<t t-esc="o.payroll_month.strftime('%B').upper()" /> 1-15, <t
+                                t-esc="o.payroll_month.strftime('%Y')" />) </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(o.total_net_1st or 0)" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> Amount Due (<t t-esc="o.payroll_month.strftime('%B').upper()" /> 16-30, <t
+                                t-esc="o.payroll_month.strftime('%Y')" />) </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(o.total_net_2nd or 0)" />
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="margin-top:16px; font-size:10px;"> Certified Correct: <div
+                        style="margin-top:20px; font-weight:bold;">NEIL ANTHONY T. MORALA</div>
+                    <div>Accountant
+                    III</div>
+                </div>
+
+            </div>
+            <p style="page-break-after: always;" />
+        </t>
+    </template>
+
+    <!-- Wraps the body in Odoo's standard PDF container -->
+    <template id="report_payslip">
+        <t t-call="web.html_container">
+            <t t-call="remittance.report_payslip_document" />
+        </t>
+    </template>
+
+    <!-- The actual printable action -->
+    <record id="action_report_payslip" model="ir.actions.report">
+        <field name="name">Payslip</field>
+        <field name="model">take.home.pay</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_payslip</field>
+        <field name="report_file">remittance.report_payslip</field>
+        <field name="print_report_name">'Payslip - %s - %s' % (object.employee_id.name,
+            object.payroll_month)</field>
+        <field name="paperformat_id" ref="paperformat_payslip" />
+        <field name="binding_model_id" ref="model_take_home_pay" />
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

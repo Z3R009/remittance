@@ -4,6 +4,10 @@ from odoo import api, fields, models
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
+    employee_number = fields.Char(
+        string="Employee Number",
+    )
+
     pera = fields.Monetary(
         string="PERA",
         currency_field="currency_id",

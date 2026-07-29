@@ -3,7 +3,8 @@
         <field name="name">take.home.pay.list</field>
         <field name="model">take.home.pay</field>
         <field name="arch" type="xml">
-            <list string="Take Home Pay">
+            <list string="Take Home Pay" default_order="payroll_month desc, employee_id asc">
+                <field name="payroll_month" />
                 <field name="employee_id" />
                 <field name="basic_salary" />
                 <field name="pera" />
@@ -16,5 +17,55 @@
         </field>
     </record>
 
+    <record id="view_take_home_pay_form" model="ir.ui.view">
+        <field name="name">take.home.pay.form</field>
+        <field name="model">take.home.pay</field>
+        <field name="arch" type="xml">
+            <form string="Take Home Pay">
+                <header>
+                    <button name="%(remittance.action_report_payslip)d" type="action"
+                        string="Print Payslip" class="btn-primary" />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="employee_id" />
+                        <field name="payroll_month" />
+                    </group>
+                    <group string="Compensation">
+                        <field name="basic_salary" readonly="1" />
+                        <field name="pera" readonly="1" />
+                        <field name="gross_earnings" readonly="1" />
+                        <field name="withholding_tax" readonly="1" />
+                    </group>
+                    <group string="Deductions">
+                        <field name="total_deductions" readonly="1" />
+                    </group>
+                    <group string="Net Pay">
+                        <field name="total_net_take_home_pay" readonly="1" />
+                        <field name="total_net_1st" readonly="1" />
+                        <field name="total_net_2nd" readonly="1" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_take_home_pay_search" model="ir.ui.view">
+        <field name="name">take.home.pay.search</field>
+        <field name="model">take.home.pay</field>
+        <field name="arch" type="xml">
+            <search string="Search Take Home Pay">
+                <field name="employee_id" />
+                <field name="payroll_month" />
+                <filter string="This Month" name="this_month"
+                    domain="[('payroll_month','=', context_today().strftime('%Y-%m-01'))]" />
+                <filter string="Last Month" name="last_month"
+                    domain="[('payroll_month','=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]" />
+                <filter string="Employee" name="group_employee" context="{'group_by':'employee_id'}" />
+                <filter string="Payroll Month" name="group_month"
+                    context="{'group_by':'payroll_month:month'}" />
+            </search>
+        </field>
+    </record>
 
 </odoo>

@@ -26,6 +26,10 @@
 
             </xpath>
 
+            <xpath expr="//field[@name='department_id']" position="before">
+                <field name="employee_number" />
+            </xpath>
+
         </field>
     </record>
 </odoo>

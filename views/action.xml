@@ -4,18 +4,21 @@
         <field name="name">Compensation</field>
         <field name="res_model">employee.compensation</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_month': 1}</field>
     </record>
 
     <record id="action_employee_deduction" model="ir.actions.act_window">
         <field name="name">Deductions</field>
         <field name="res_model">employee.deduction</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_month': 1}</field>
     </record>
 
     <record id="action_take_home_pay" model="ir.actions.act_window">
         <field name="name">Take Home Pay</field>
         <field name="res_model">take.home.pay</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_month': 1}</field>
     </record>
 
 </odoo>
