@@ -54,6 +54,16 @@ class EmployeeCompensation(models.Model):
         currency_field="currency_id",
     )
 
+    representation_allowance = fields.Monetary(
+        string="Representation Allowance",
+        currency_field="currency_id",
+    )
+
+    transportation_allowance = fields.Monetary(
+        string="Transportation Allowance",
+        currency_field="currency_id",
+    )
+
     _unique_employee_month = models.Constraint(
         'unique(employee_id, payroll_month)',
         'This employee already has a compensation record for this payroll month!',

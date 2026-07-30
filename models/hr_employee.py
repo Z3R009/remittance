@@ -28,9 +28,19 @@ class HrEmployee(models.Model):
         tracking=True,
     )
 
-    @api.depends("wage", "pera")
+    representation_allowance = fields.Monetary(
+        string="Representation Allowance",
+        currency_field="currency_id",
+        tracking=True,
+    )
+
+    travelling_allowance = fields.Monetary(
+            string="Travelling Allowance",
+            currency_field="currency_id",
+            tracking=True,
+        )
+
+    @api.depends("wage", "pera", "representation_allowance", "travelling_allowance")
     def _compute_gross_earnings(self):
         for rec in self:
-            rec.gross_earnings = (rec.wage or 0.0) + (rec.pera or 0.0)
-
-    
+            rec.gross_earnings = (rec.wage or 0.0) + (rec.pera or 0.0) + (rec.representation_allowance or 0.0) + (rec.travelling_allowance or 0.0)

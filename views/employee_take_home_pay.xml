@@ -33,8 +33,10 @@
                     </group>
                     <group string="Compensation">
                         <field name="basic_salary" readonly="1" />
+                        <field name="representation_allowance" readonly="1" />
+                        <field name="transportation_allowance" readonly="1" />
                         <field name="pera" readonly="1" />
-                        <field name="gross_earnings" readonly="1" />
+                        <field name="gross_earnings_payslip" readonly="1" />
                         <field name="withholding_tax" readonly="1" />
                     </group>
                     <group string="Deductions">

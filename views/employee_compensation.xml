@@ -64,6 +64,8 @@
                     <group string="Compensation">
                         <field name="basic_salary" readonly="locked" />
                         <field name="pera" readonly="locked" />
+                        <field name="representation_allowance" readonly="locked" />
+                        <field name="transportation_allowance" readonly="locked" />
                         <field name="gross_earnings" readonly="1" />
                         <field name="withholding_tax" readonly="locked" />
                     </group>

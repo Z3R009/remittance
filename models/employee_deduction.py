@@ -35,6 +35,12 @@ class EmployeeDeduction(models.Model):
         help="First day of the month this deduction applies to (e.g. 2026-07-01 for July 2026)",
     )
 
+    basic_salary = fields.Monetary(
+            string="Basic Salary",
+            currency_field="currency_id",
+            related="employee_id.wage",
+        )
+
     withholding_tax = fields.Monetary(
     string="Withholding Tax",
     related="employee_id.withholding_tax",
@@ -47,6 +53,7 @@ class EmployeeDeduction(models.Model):
     gsis_rlip = fields.Monetary(
         string="GSIS RLIP",
         currency_field="currency_id",
+        compute="_compute_gsis_rlip",
         help="Retirement/Life Insurance/Provident"
     )
     
@@ -419,7 +426,15 @@ class EmployeeDeduction(models.Model):
         for rec in self:
             rec.deduction_group = False
 
+
+    @api.depends('basic_salary')
+    def _compute_gsis_rlip(self):
+        for rec in self:
+            rec.gsis_rlip = (rec.basic_salary or 0) * 0.09
+
     _unique_employee_month = models.Constraint(
         'unique(employee_id, payroll_month)',
         'This employee already has a deduction record for this payroll month!',
     )
+
+    

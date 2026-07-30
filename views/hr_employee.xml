@@ -24,6 +24,18 @@
                     <field name="withholding_tax" class="oe_inline o_hr_narrow_field" nolabel="1" />
                 </div>
 
+                <label for="representation_allowance" />
+                <div class="o_row">
+                    <field name="representation_allowance" class="oe_inline o_hr_narrow_field"
+                        nolabel="1" />
+                </div>
+
+                <label for="travelling_allowance" />
+                <div class="o_row">
+                    <field name="travelling_allowance" class="oe_inline o_hr_narrow_field"
+                        nolabel="1" />
+                </div>
+
             </xpath>
 
             <xpath expr="//field[@name='department_id']" position="before">

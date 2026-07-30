@@ -57,12 +57,36 @@ class TakeHomePay(models.Model):
         store=True,
     )
 
+    gross_earnings_payslip = fields.Monetary(
+            string="Gross Earnings",
+            compute="_compute_gross_earnings_payslip",
+            currency_field="currency_id",
+            readonly=True,
+            store=True,
+        )
+
     withholding_tax = fields.Monetary(
-    string="Withholding Tax",
-    related="employee_compensation_id.withholding_tax",
-    currency_field="currency_id",
-    readonly=True,
-    store=True,
+        string="Withholding Tax",
+        related="employee_compensation_id.withholding_tax",
+        currency_field="currency_id",
+        readonly=True,
+        store=True,
+    )
+
+    representation_allowance = fields.Monetary(
+        string="Representation Allowance",
+        related="employee_compensation_id.representation_allowance",
+        currency_field="currency_id",
+        readonly=True,
+        store=True,
+    )
+
+    transportation_allowance = fields.Monetary(
+        string="Transportation Allowance",
+        related="employee_compensation_id.transportation_allowance",
+        currency_field="currency_id",
+        readonly=True,
+        store=True,
     )
 
     total_deductions = fields.Monetary(
@@ -308,6 +332,13 @@ class TakeHomePay(models.Model):
         currency_field="currency_id",
     )
 
+    net_pay_payslip= fields.Monetary(
+        string="Net Pay",
+        compute="_compute_net_pay_payslip",
+        store=True,
+        currency_field="currency_id",
+    )
+
     total_net_1st= fields.Monetary(
         string="1st Half",
         compute="_compute_total_net_1st",
@@ -322,11 +353,16 @@ class TakeHomePay(models.Model):
         currency_field="currency_id",
     )
 
-
+    total_net_1st_payslip= fields.Monetary(
+        string="1st Half Payslip",
+        compute="_compute_total_net_1st_payslip",
+        store=True,
+        currency_field="currency_id",
+    )
 
     # compute
 
-    @api.depends('basic_salary', 'pera', 'gross_earnings', 'withholding_tax', 'total_deductions', 'gsis_rlip', 'gsis_conso_loan', 'gsis_mpl', 'gsis_emergency_loan', 'gsis_emergency_loan', 'gsis_computer_loan', 'gsis_educ_loan', 'gsis_solar_loan', 'gsis_policy_loan_reg', 'gsis_policy_loan_opt',
+    @api.depends('basic_salary', 'pera', 'gross_earnings', 'representation_allowance', 'transportation_allowance', 'withholding_tax', 'total_deductions', 'gsis_rlip', 'gsis_conso_loan', 'gsis_mpl', 'gsis_emergency_loan', 'gsis_emergency_loan', 'gsis_computer_loan', 'gsis_educ_loan', 'gsis_solar_loan', 'gsis_policy_loan_reg', 'gsis_policy_loan_opt',
                  'gsis_opt_life_pre', 'gsis_mpl_lite', 'gsis_rel', 'gsis_gfal_2',
                  'hdmf_cont1', 'hdmf_mp2', 'hdmf_mpl', 'hdmf_calamity_loan', 'hdmf_housing', 
                  'philhealth', 'globe', 'dti_pf_cont', 'mdbf', 'dti_pf_loan', 'dti_eu_dues', 'lbp_dbp', 'dti_eu_hmo', 'amaphil', 'whc')
@@ -336,7 +372,9 @@ class TakeHomePay(models.Model):
             rec.total_net_take_home_pay = (
 
                     (rec.basic_salary or 0) +
-                    (rec.pera or 0) -
+                    (rec.pera or 0) +
+                    (rec.representation_allowance or 0) +
+                    (rec.transportation_allowance or 0) -
                     (rec.withholding_tax or 0) -
                     (rec.gsis_rlip or 0) -
                     (rec.gsis_conso_loan or 0) -
@@ -421,6 +459,32 @@ class TakeHomePay(models.Model):
                 (rec.total_deductions or 0)
             )
             ) / 2
+
+    @api.depends('total_net_1st', 'representation_allowance', 'transportation_allowance')
+    def _compute_total_net_1st_payslip(self):
+        for rec in self:
+            rec.total_net_1st_payslip = (
+                (rec.total_net_1st or 0) +
+                (rec.representation_allowance or 0) +
+                (rec.transportation_allowance or 0)
+            )
+
+    @api.depends('gross_earnings', 'representation_allowance', 'transportation_allowance')
+    def _compute_gross_earnings_payslip(self):
+        for rec in self:
+            rec.gross_earnings_payslip = (
+                (rec.gross_earnings or 0) +
+                (rec.representation_allowance or 0) +
+                (rec.transportation_allowance or 0) 
+            )
+
+    @api.depends('gross_earnings_payslip', 'total_deductions')
+    def _compute_net_pay_payslip(self):
+        for rec in self:
+            rec.net_pay_payslip = (
+                (rec.gross_earnings_payslip or 0) -
+                (rec.total_deductions or 0)
+            )
 
 
 
