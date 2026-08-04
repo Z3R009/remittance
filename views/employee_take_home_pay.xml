@@ -6,6 +6,7 @@
             <list string="Take Home Pay" default_order="payroll_month desc, employee_id asc">
                 <field name="payroll_month" />
                 <field name="employee_id" />
+                <field name="department_id" />
                 <field name="basic_salary" />
                 <field name="pera" />
                 <field name="gross_earnings" />
@@ -29,6 +30,7 @@
                 <sheet>
                     <group>
                         <field name="employee_id" />
+                        <field name="department_id" />
                         <field name="payroll_month" />
                     </group>
                     <group string="Compensation">

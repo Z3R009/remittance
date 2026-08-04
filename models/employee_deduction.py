@@ -21,6 +21,12 @@ class EmployeeDeduction(models.Model):
         readonly=True,
         store=True,
     )
+
+    department_id = fields.Many2one(
+                "hr.department",
+                string="Department",
+                required=True,
+        )
     
     currency_id = fields.Many2one(
         "res.currency",
@@ -294,6 +300,14 @@ class EmployeeDeduction(models.Model):
         string="Deduction Group",
         compute="_compute_deduction_group",
     )
+
+    @api.model
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('department_id') and vals.get('employee_id'):
+                employee = self.env['hr.employee'].browse(vals['employee_id'])
+                vals['department_id'] = employee.department_id.id
+        return super().create(vals_list)
 
     def action_carry_forward(self):
         self.ensure_one()

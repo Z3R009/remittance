@@ -13,6 +13,12 @@ class TakeHomePay(models.Model):
         ondelete="cascade",
     )
 
+    department_id = fields.Many2one(
+            "hr.department",
+            string="Department",
+            required=True,
+    )
+
     currency_id = fields.Many2one(
         "res.currency",
         related="employee_id.company_id.currency_id",
@@ -487,6 +493,20 @@ class TakeHomePay(models.Model):
             )
 
 
+
+    @api.model
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('department_id'):
+                department_id = False
+                if vals.get('employee_compensation_id'):
+                    comp = self.env['employee.compensation'].browse(vals['employee_compensation_id'])
+                    department_id = comp.department_id.id
+                elif vals.get('employee_id'):
+                    employee = self.env['hr.employee'].browse(vals['employee_id'])
+                    department_id = employee.department_id.id
+                vals['department_id'] = department_id
+        return super().create(vals_list)
 
     _unique_employee_month_thp = models.Constraint(
         'unique(employee_id, payroll_month)',

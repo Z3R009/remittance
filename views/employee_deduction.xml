@@ -8,6 +8,7 @@
             <list string="Employee Deductions" default_order="payroll_month desc, employee_name asc">
                 <field name="payroll_month" />
                 <field name="employee_name" />
+                <field name="department_id" />
                 <field name="withholding_tax" readonly="1" />
                 <field name="total_gsis" />
                 <field name="total_hdmf" />
@@ -29,8 +30,12 @@
                     <div class="oe_title">
                         <h1>
                             <field name="employee_name" readonly="1" class="oe_inline" />
+
                         </h1>
-                        <field name="payroll_month" />
+                        <group>
+                            <field name="department_id" />
+                            <field name="payroll_month" />
+                        </group>
                     </div>
 
                     <!-- SUMMARY ROW - Always visible -->

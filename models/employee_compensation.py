@@ -13,6 +13,12 @@ class EmployeeCompensation(models.Model):
         required=True,
     )
 
+    department_id = fields.Many2one(
+            "hr.department",
+            string="Department",
+            required=True,
+    )
+
     currency_id = fields.Many2one(
         "res.currency",
         related="employee_id.company_id.currency_id",
@@ -81,6 +87,7 @@ class EmployeeCompensation(models.Model):
                 rec.basic_salary = rec.employee_id.wage or 0
                 rec.pera = rec.employee_id.pera or 0
                 rec.withholding_tax = rec.employee_id.withholding_tax or 0
+                rec.department_id = rec.employee_id.department_id
 
     def write(self, vals):
         protected_fields = {'basic_salary', 'pera', 'withholding_tax', 'employee_id', 'payroll_month'}
@@ -174,6 +181,7 @@ class EmployeeCompensation(models.Model):
                 vals.setdefault('basic_salary', employee.wage or 0)
                 vals.setdefault('pera', employee.pera or 0)
                 vals.setdefault('withholding_tax', employee.withholding_tax or 0)
+                vals.setdefault('department_id', employee.department_id.id)
 
         records = super().create(vals_list)
 
