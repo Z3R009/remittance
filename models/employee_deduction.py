@@ -339,11 +339,17 @@ class EmployeeDeduction(models.Model):
             if self[fname]:
                 paid_field = fname + '_paid'
                 term_field = fname + '_term'
-                new_paid = (self[paid_field] or 0) + 1
+                old_paid = self[paid_field] or 0
                 term = self[term_field] or 0
-                loan_updates[paid_field] = new_paid
-                if term and new_paid >= term:
+
+                if term and old_paid >= term:
+                    # Last month was already the final payment (e.g. 10/10)
+                    # — this month gets no deduction, and paid stops climbing.
                     loan_updates[fname] = 0
+                else:
+                    # Still within term, including the exact final month
+                    # (9/10 -> 10/10 still deducts this time).
+                    loan_updates[paid_field] = old_paid + 1
         if loan_updates:
             new_deduction.write(loan_updates)
 
