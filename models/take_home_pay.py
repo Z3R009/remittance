@@ -514,6 +514,58 @@ class TakeHomePay(models.Model):
     )
 
 
+    @api.model
+    def amount_to_words_pesos(self, amount):
+        ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+                'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
+                'Seventeen', 'Eighteen', 'Nineteen']
+        tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
+
+        def three_digit_words(n):
+            words = []
+            if n >= 100:
+                words.append(ones[n // 100])
+                words.append('Hundred')
+                n %= 100
+            if n >= 20:
+                words.append(tens[n // 10])
+                if n % 10:
+                    words.append(ones[n % 10])
+            elif n > 0:
+                words.append(ones[n])
+            return ' '.join(words)
+
+        def number_to_words(n):
+            if n == 0:
+                return 'Zero'
+            groups = ['', 'Thousand', 'Million', 'Billion']
+            parts = []
+            i = 0
+            while n > 0:
+                chunk = n % 1000
+                if chunk:
+                    chunk_words = three_digit_words(chunk)
+                    if groups[i]:
+                        chunk_words += ' ' + groups[i]
+                    parts.insert(0, chunk_words)
+                n //= 1000
+                i += 1
+            return ' '.join(parts)
+
+        amount = amount or 0
+        whole = int(amount)
+        cents = round((amount - whole) * 100)
+        if cents == 100:
+            whole += 1
+            cents = 0
+        return "%s & %02d/100 Pesos Only" % (number_to_words(whole), cents)
+
+    _unique_employee_month_thp = models.Constraint(
+        'unique(employee_id, payroll_month)',
+        'This employee already has a take-home-pay record for this payroll month!',
+    )
+
+
 
     
     

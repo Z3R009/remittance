@@ -1,0 +1,608 @@
+<odoo>
+
+    <!-- Landscape A4, minimal margins to fit ~29 columns -->
+    <record id="paperformat_general_payroll" model="report.paperformat">
+        <field name="name">General Payroll</field>
+        <field name="default" eval="False" />
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">4</field>
+        <field name="margin_right">4</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <!-- Reusable single value + optional loan paid/term badge -->
+    <template id="gp_value">
+        <t t-if="value">
+            <t t-esc="'{:,.2f}'.format(value)" />
+        </t>
+        <t t-else="">-</t>
+        <t t-if="term">
+            <br />
+            <span style="color:#900; font-size:6px;">
+                <t t-esc="paid" />/<t t-esc="term" />
+            </span>
+        </t>
+    </template>
+
+    <template id="report_general_payroll_document">
+        <t t-set="recs" t-value="docs" />
+        <t t-set="today_str"
+            t-value="'%s/%s/%s' % (datetime.date.today().month, datetime.date.today().day, datetime.date.today().year)" />
+        <t t-set="grand_total_net" t-value="sum(recs.mapped('total_net_take_home_pay'))" />
+
+        <div style="font-family: Arial, sans-serif; font-size:8px;">
+
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:60%;"> Entity Name: <b>
+                            <u>
+                                <t t-esc="'DEPARTMENT OF TRADE AND INDUSTRY XII'" />
+                            </u>
+                        </b><br />
+                        Fund Cluster: <b>
+                            <u>
+                                <t t-esc="'REGULAR AGENCY FUND (01101101)'" />
+                            </u>
+                        </b>
+                    </td>
+                    <td style="text-align:right; font-size:8px;">
+                        DTI12-FA-SF005
+                    </td>
+                </tr>
+            </table>
+
+            <div style="text-align:center; margin-top:4px;">
+                <div style="font-weight:bold; font-size:12px;">GENERAL PAYROLL</div>
+                <div style="font-weight:bold;">
+                    DEPARTMENT OF TRADE AND INDUSTRY - REGION 12
+                </div>
+                <div style="font-weight:bold;">
+                    <t
+                        t-esc="recs[:1].employee_id.department_id.get_top_parent().name if recs and recs[:1].employee_id.department_id else ''" />
+                </div>
+                <div style="font-weight:bold;"> FOR THE MONTH OF <t
+                        t-esc="recs[:1].payroll_month.strftime('%B %Y').upper() if recs else ''" />
+                </div>
+            </div>
+
+            <div style="margin-top:4px; font-size:8px;">
+                We acknowledge receipt of cash shown opposite our name as full compensation for
+                services
+                rendered for the period covered.
+            </div>
+
+            <table style="width:100%; border-collapse:collapse; margin-top:4px; font-size:7px;"
+                border="1">
+                <thead>
+                    <tr style="text-align:center; font-weight:bold;">
+                        <td rowspan="3" style="width:8%;">NAME</td>
+                        <td colspan="4">COMPENSATIONS</td>
+                        <td colspan="21">DEDUCTIONS</td>
+                        <td colspan="2">NET TAKE HOME PAY</td>
+                        <td rowspan="3">SIGNATURE</td>
+                    </tr>
+                    <tr style="text-align:center; font-weight:bold;">
+                        <td colspan="4"></td>
+                        <td colspan="9">G S I S</td>
+                        <td colspan="4">HDMF/PAG-IBIG</td>
+                        <td colspan="7">OTHER DEDUCTIONS</td>
+                        <td rowspan="2">TOTAL<br />DEDUCTIONS</td>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr style="text-align:center; font-weight:bold;">
+                        <td>BASIC<br />Salary</td>
+                        <td>OTHER<br />ALLOWANCE/PERA</td>
+                        <td>GROSS<br />EARNINGS</td>
+                        <td>W/HOLDING<br />TAX</td>
+
+                        <td>RLIP</td>
+                        <td>CONSOLOAN<br />MPL</td>
+                        <td>EML<br />CMPL</td>
+                        <td>EDUC'L<br />LOAN</td>
+                        <td>SOLAR<br />LOAN</td>
+                        <td>POLICY LOAN<br />REG/OPT</td>
+                        <td>OPT_LIFE/PRE<br />MPL LITE</td>
+                        <td>R.E.L.</td>
+                        <td>GFAL II</td>
+
+                        <td>CONT.I</td>
+                        <td>CONT.II</td>
+                        <td>MPL<br />Calamity</td>
+                        <td>LOT/<br />Housing</td>
+
+                        <td>PHIC<br />CONT</td>
+                        <td>DTI-PF Cont.<br />MDBF</td>
+                        <td>DTI-PF Loan/<br />DTI-EU Dues</td>
+                        <td>LBP/DBP Loan<br />DTI-EU HMO</td>
+                        <td>AMAPHIL</td>
+                        <td>WHC</td>
+                        <td>GLOBE</td>
+
+                        <td>1-15</td>
+                        <td>16-31</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="recs" t-as="rec">
+                        <tr>
+                            <td>
+                                <b>
+                                    <t t-esc="rec.employee_id.employee_number or ''" />
+                                </b>
+                                <br />
+                                <b>
+                                    <t t-esc="(rec.employee_id.name or '').upper()" />
+                                </b>
+                                <br />
+                                <i>
+                                    <t
+                                        t-esc="rec.employee_id.job_title or (rec.employee_id.job_id.name or '')" />
+                                </i>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.basic_salary or 0)" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t
+                                    t-esc="'{:,.2f}'.format((rec.pera or 0) + (rec.representation_allowance or 0) + (rec.transportation_allowance or 0))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.gross_earnings or 0)" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.withholding_tax or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.gsis_rlip or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_conso_loan" />
+                                    <t t-set="paid" t-value="rec.gsis_conso_loan_paid" />
+                                    <t t-set="term" t-value="rec.gsis_conso_loan_term" />
+                                </t>
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_mpl" />
+                                    <t t-set="paid" t-value="rec.gsis_mpl_paid" />
+                                    <t t-set="term" t-value="rec.gsis_mpl_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_emergency_loan" />
+                                    <t t-set="paid" t-value="rec.gsis_emergency_loan_paid" />
+                                    <t t-set="term" t-value="rec.gsis_emergency_loan_term" />
+                                </t>
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_computer_loan" />
+                                    <t t-set="paid" t-value="rec.gsis_computer_loan_paid" />
+                                    <t t-set="term" t-value="rec.gsis_computer_loan_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_educ_loan" />
+                                    <t t-set="paid" t-value="rec.gsis_educ_loan_paid" />
+                                    <t t-set="term" t-value="rec.gsis_educ_loan_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_solar_loan" />
+                                    <t t-set="paid" t-value="rec.gsis_solar_loan_paid" />
+                                    <t t-set="term" t-value="rec.gsis_solar_loan_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_policy_loan_reg" />
+                                    <t t-set="paid" t-value="rec.gsis_policy_loan_reg_paid" />
+                                    <t t-set="term" t-value="rec.gsis_policy_loan_reg_term" />
+                                </t>
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_policy_loan_opt" />
+                                    <t t-set="paid" t-value="rec.gsis_policy_loan_opt_paid" />
+                                    <t t-set="term" t-value="rec.gsis_policy_loan_opt_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_opt_life_pre" />
+                                    <t t-set="paid" t-value="rec.gsis_opt_life_pre_paid" />
+                                    <t t-set="term" t-value="rec.gsis_opt_life_pre_term" />
+                                </t>
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_mpl_lite" />
+                                    <t t-set="paid" t-value="0" />
+                                    <t t-set="term" t-value="0" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.gsis_rel or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_gfal_2" />
+                                    <t t-set="paid" t-value="rec.gsis_gfal_2_paid" />
+                                    <t t-set="term" t-value="rec.gsis_gfal_2_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.hdmf_cont1 or 0)" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.hdmf_mp2 or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.hdmf_mpl" />
+                                    <t t-set="paid" t-value="rec.hdmf_mpl_paid" />
+                                    <t t-set="term" t-value="rec.hdmf_mpl_term" />
+                                </t>
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.hdmf_calamity_loan" />
+                                    <t t-set="paid" t-value="rec.hdmf_calamity_loan_paid" />
+                                    <t t-set="term" t-value="rec.hdmf_calamity_loan_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.hdmf_housing" />
+                                    <t t-set="paid" t-value="rec.hdmf_housing_paid" />
+                                    <t t-set="term" t-value="rec.hdmf_housing_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.philhealth or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.dti_pf_cont or 0)" />
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-esc="'{:,.2f}'.format(rec.mdbf or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.dti_pf_loan" />
+                                    <t t-set="paid" t-value="rec.dti_pf_loan_paid" />
+                                    <t t-set="term" t-value="rec.dti_pf_loan_term" />
+                                </t>
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-esc="'{:,.2f}'.format(rec.dti_eu_dues or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.lbp_dbp" />
+                                    <t t-set="paid" t-value="rec.lbp_dbp_paid" />
+                                    <t t-set="term" t-value="rec.lbp_dbp_term" />
+                                </t>
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-esc="'{:,.2f}'.format(rec.dti_eu_hmo or 0)" />
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.amaphil" />
+                                    <t t-set="paid" t-value="rec.amaphil_paid" />
+                                    <t t-set="term" t-value="rec.amaphil_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.whc" />
+                                    <t t-set="paid" t-value="rec.whc_paid" />
+                                    <t t-set="term" t-value="rec.whc_term" />
+                                </t>
+                            </td>
+
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(rec.globe or 0)" />
+                            </td>
+
+                            <td style="text-align:right; font-weight:bold;">
+                                <t t-esc="'{:,.2f}'.format(rec.total_deductions or 0)" />
+                            </td>
+
+                            <td style="text-align:right; font-weight:bold;">
+                                <t t-esc="'{:,.2f}'.format(rec.total_net_1st or 0)" />
+                            </td>
+                            <td style="text-align:right; font-weight:bold;">
+                                <t t-esc="'{:,.2f}'.format(rec.total_net_2nd or 0)" />
+                            </td>
+
+                            <td></td>
+                        </tr>
+                    </t>
+
+                    <tr style="font-weight:bold; border-top:2px solid #000;">
+                        <td>SUB TOTAL</td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('basic_salary')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('pera')) + sum(recs.mapped('representation_allowance')) + sum(recs.mapped('transportation_allowance')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('gross_earnings')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('withholding_tax')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_rlip')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_conso_loan')) + sum(recs.mapped('gsis_mpl')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_emergency_loan')) + sum(recs.mapped('gsis_computer_loan')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_educ_loan')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_solar_loan')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_policy_loan_reg')) + sum(recs.mapped('gsis_policy_loan_opt')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_opt_life_pre')) + sum(recs.mapped('gsis_mpl_lite')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_rel')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('gsis_gfal_2')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('hdmf_cont1')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('hdmf_mp2')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('hdmf_mpl')) + sum(recs.mapped('hdmf_calamity_loan')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('hdmf_housing')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('philhealth')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('dti_pf_cont')) + sum(recs.mapped('mdbf')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('dti_pf_loan')) + sum(recs.mapped('dti_eu_dues')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t
+                                t-esc="'{:,.2f}'.format(sum(recs.mapped('lbp_dbp')) + sum(recs.mapped('dti_eu_hmo')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('amaphil')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('whc')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('globe')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('total_deductions')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('total_net_1st')))" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('total_net_2nd')))" />
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table
+                style="width:100%; margin-top:14px; font-size:8px; border-collapse:collapse; border:1px solid #000;">
+                <tr>
+                    <td
+                        style="width:2%; text-align:center; vertical-align:top; padding:2px;">
+                        <b>A</b>
+                    </td>
+                    <td
+                        style="width:36%; border-right:1px solid #000; vertical-align:top; padding:3px;">
+                        CERTIFIED: Services duly rendered as stated. <table
+                            style="width:100%; margin-top:22px;">
+                            <tr>
+                                <td
+                                    style="width:65%; font-weight:bold; font-size:10px; text-align:center; text-decoration:underline;">MA.
+                        ELLEN T. ESCALONA</td>
+                                <td
+                                    style="text-decoration:underline; font-size:10px; text-align:center;">
+                                    <t t-esc="today_str" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:10px; text-align:center;">Admin. Officer V
+                        (HRMO)</td>
+                                <td style="font-size:10px; text-align:center;">Date</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td
+                        style="width:2%;  text-align:center; vertical-align:top; padding:2px;">
+                        <b>C</b>
+                    </td>
+                    <td
+                        style="width:36%; border-right:1px solid #000; vertical-align:top; padding:3px;">
+                        CERTIFIED: APPROVED FOR PAYMENT <u>
+                            <t t-esc="env['take.home.pay'].amount_to_words_pesos(grand_total_net)" />
+                        </u>
+                        <div
+                            style="margin-top:4px;">
+                            <t
+                                t-esc="'{:,.2f}'.format(grand_total_net)" />
+                        </div>
+                        <table
+                            style="width:100%; margin-top:14px;">
+                            <tr>
+                                <td
+                                    style="width:65%; font-weight:bold; font-size:10px; text-align:center; text-decoration:underline;">HAZEL
+                        A. HAUTEA</td>
+                                <td
+                                    style="text-decoration:underline; font-size:10px; text-align:center;">
+                                    <t t-esc="today_str" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:10px; text-align:center;">Chief Administrative
+                        Officer</td>
+                                <td style="font-size:10px; text-align:center;">Date</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td rowspan="2"
+                        style="width:22%;  padding-left:6px; padding-top:3px;">
+                        <div style="color:#900; font-weight:bold;">Payroll No. ___________________</div>
+                        <div style="margin-top:8px;">ORS/BURS No. _______________</div>
+                        <div style="margin-top:8px;">Date _______________________</div>
+                        <div style="margin-top:8px;">JEV No. ____________________</div>
+                        <div style="margin-top:8px;">Date _______________________</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="border-top:1px solid #000; border-bottom:1px solid #000; text-align:center; vertical-align:top; padding:2px;">
+                        <b>B</b>
+                    </td>
+                    <td
+                        style="border-top:1px solid #000; border-right:1px solid #000; border-bottom:1px solid #000; vertical-align:top; padding:3px;">
+                        CERTIFIED: Supporting documents complete and proper, and cash available in
+                        the amount of P&#160;<t
+                            t-esc="'{:,.2f}'.format(grand_total_net)" />
+                        <table
+                            style="width:100%; margin-top:22px;">
+                            <tr>
+                                <td
+                                    style="width:65%; font-weight:bold; font-size:10px; text-align:center; text-decoration:underline;">NEIL
+                        ANTHONY T. MORALA</td>
+                                <td
+                                    style="text-decoration:underline; font-size:10px; text-align:center;">
+                                    <t t-esc="today_str" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:10px; text-align:center;">Accountant III</td>
+                                <td style="font-size:10px; text-align:center;">Date</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td
+                        style="border-top:1px solid #000; border-bottom:1px solid #000; text-align:center; vertical-align:top; padding:2px;">
+                        <b>D</b>
+                    </td>
+                    <td
+                        style="border-top:1px solid #000; border-right:1px solid #000; border-bottom:1px solid #000; vertical-align:top; padding:3px;">
+                        CERTIFIED: Each employee whose name appears above has been paid the amount
+                        indicated opposite his/her name. <table
+                            style="width:100%; margin-top:22px;">
+                            <tr>
+                                <td
+                                    style="font-weight:bold; font-size:10px; text-align:center; text-decoration:underline;">MILDRED
+                        T.
+                                    SUCOL</td>
+                                <td
+                                    style="text-decoration:underline; font-size:10px; text-align:center;">
+                                    <t t-esc="today_str" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:10px; text-align:center;">Admin. Officer III
+                        (Cashier)</td>
+                                <td style="font-size:10px; text-align:center;">Date</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </template>
+
+    <template id="report_general_payroll">
+        <t t-call="web.html_container">
+            <t t-call="remittance.report_general_payroll_document" />
+        </t>
+    </template>
+
+    <record id="action_report_general_payroll" model="ir.actions.report">
+        <field name="name">General Payroll</field>
+        <field name="model">take.home.pay</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_general_payroll</field>
+        <field name="report_file">remittance.report_general_payroll</field>
+        <field name="print_report_name">'General Payroll'</field>
+        <field name="paperformat_id" ref="paperformat_general_payroll" />
+        <field name="binding_model_id" ref="model_take_home_pay" />
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_general_payroll_bulk">
+        <t t-call="web.html_container">
+            <t t-set="thp_list"
+                t-value="env['take.home.pay'].search([('employee_compensation_id', 'in', docs.ids)])" />
+            <t t-call="remittance.report_general_payroll_document">
+                <t t-set="docs" t-value="thp_list" />
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_general_payroll_bulk" model="ir.actions.report">
+        <field name="name">General Payroll</field>
+        <field name="model">employee.compensation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_general_payroll_bulk</field>
+        <field name="report_file">remittance.report_general_payroll_bulk</field>
+        <field name="print_report_name">'General Payroll'</field>
+        <field name="paperformat_id" ref="paperformat_general_payroll" />
+        <field name="binding_model_id" ref="model_employee_compensation" />
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

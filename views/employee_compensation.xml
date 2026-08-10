@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <search string="Search Compensation">
                 <field name="employee_id" />
+                <field name="department_id" />
                 <field name="payroll_month" />
                 <filter string="This Month" name="this_month"
                     domain="[('payroll_month','=', context_today().strftime('%Y-%m-01'))]" />
@@ -16,6 +17,9 @@
                 <filter string="Locked" name="locked_only" domain="[('locked','=',True)]" />
                 <filter string="Unlocked" name="unlocked_only" domain="[('locked','=',False)]" />
                 <filter string="Employee" name="group_employee" context="{'group_by':'employee_id'}" />
+                <filter string="Department"
+                    name="group_department"
+                    context="{'group_by': 'department_id'}" />
                 <filter string="Payroll Month" name="group_month"
                     context="{'group_by':'payroll_month:month'}" />
             </search>

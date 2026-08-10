@@ -14,6 +14,7 @@
     'data': [
         'security/ir.model.access.csv',
         'reports/payslip_report.xml',
+        'reports/general_payroll_report.xml',
         'views/employee_deduction.xml',
         'views/employee_compensation.xml',
         'views/employee_take_home_pay.xml',

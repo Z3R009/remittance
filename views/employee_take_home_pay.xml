@@ -60,6 +60,9 @@
         <field name="arch" type="xml">
             <search string="Search Take Home Pay">
                 <field name="employee_id" />
+                <filter string="Department"
+                    name="group_department"
+                    context="{'group_by': 'department_id'}" />
                 <field name="payroll_month" />
                 <filter string="This Month" name="this_month"
                     domain="[('payroll_month','=', context_today().strftime('%Y-%m-01'))]" />

@@ -67,7 +67,8 @@
                     <b>Office/Division</b>
                 </td>
                 <td>
-                    <t t-esc="o.employee_id.department_id.get_top_parent().name if o.employee_id.department_id else ''" />
+                    <t
+                        t-esc="o.employee_id.department_id.get_top_parent().name if o.employee_id.department_id else ''" />
                 </td>
             </tr>
             <tr>
@@ -578,7 +579,7 @@
                 </table>
             </div>
             <p t-if="not batch_start_last" style="page-break-after: always;" />
-        </t>        
+        </t>
     </template>
 
     <template id="report_payslip_bulk">
@@ -598,5 +599,17 @@
         <field name="binding_model_id" ref="model_employee_compensation" />
         <field name="binding_type">report</field>
     </record>
+
+    <!-- <record id="action_report_payslip_bulk" model="ir.actions.report">
+        <field name="name">Print Payroll</field>
+        <field name="model">employee.compensation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_payslip_bulk</field>
+        <field name="report_file">remittance.report_payslip_bulk</field>
+        <field name="print_report_name">'Payslips'</field>
+        <field name="paperformat_id" ref="paperformat_payslip_bulk" />
+        <field name="binding_model_id" ref="model_employee_compensation" />
+        <field name="binding_type">report</field>
+    </record> -->
 
 </odoo>
