@@ -18,28 +18,33 @@
     <!-- Reusable single value + optional loan paid/term badge -->
     <template id="gp_value">
         <t t-if="value">
-            <t t-esc="'{:,.2f}'.format(value)" />
+            <t t-if="changed">
+                <span style="background-color:yellow;">
+                    <t t-esc="'{:,.2f}'.format(value)" />
+                </span>
+            </t>
+            <t t-else="">
+                <t t-esc="'{:,.2f}'.format(value)" />
+            </t>
         </t>
         <t t-else="">-</t>
-        <t t-if="term">
-            <br />
-            <span style="color:#900; font-size:6px;">
-                <t t-esc="paid" />/<t t-esc="term" />
-            </span>
-        </t>
+        <br />
+        <span style="color:#900; font-size:6px;">
+            <t t-esc="paid" />/<t t-esc="term" />
+        </span>
     </template>
 
     <template id="report_general_payroll_document">
         <t t-set="recs" t-value="docs" />
         <t t-set="today_str"
             t-value="'%s/%s/%s' % (datetime.date.today().month, datetime.date.today().day, datetime.date.today().year)" />
-        <t t-set="grand_total_net" t-value="sum(recs.mapped('total_net_take_home_pay'))" />
+        <t t-set="grand_total_net" t-value="sum(recs.mapped('net_pay_payslip'))" />
 
         <div style="font-family: Arial, sans-serif; font-size:8px;">
 
             <table style="width:100%;">
                 <tr>
-                    <td style="width:60%;"> Entity Name: <b>
+                    <td style="width:60%; font-size:8px;"> Entity Name: <b>
                             <u>
                                 <t t-esc="'DEPARTMENT OF TRADE AND INDUSTRY XII'" />
                             </u>
@@ -96,7 +101,7 @@
                     </tr>
                     <tr style="text-align:center; font-weight:bold;">
                         <td>BASIC<br />Salary</td>
-                        <td>OTHER<br />ALLOWANCE/PERA</td>
+                        <td>PERA</td>
                         <td>GROSS<br />EARNINGS</td>
                         <td>W/HOLDING<br />TAX</td>
 
@@ -230,8 +235,8 @@
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-call="remittance.gp_value">
                                     <t t-set="value" t-value="rec.gsis_mpl_lite" />
-                                    <t t-set="paid" t-value="0" />
-                                    <t t-set="term" t-value="0" />
+                                    <t t-set="paid" t-value="rec.gsis_mpl_lite_paid" />
+                                    <t t-set="term" t-value="rec.gsis_mpl_lite_term" />
                                 </t>
                             </td>
 
@@ -514,7 +519,7 @@
                     <td
                         style="border-top:1px solid #000; border-right:1px solid #000; border-bottom:1px solid #000; vertical-align:top; padding:3px;">
                         CERTIFIED: Supporting documents complete and proper, and cash available in
-                        the amount of P&#160;<t
+                        the amount of P <t
                             t-esc="'{:,.2f}'.format(grand_total_net)" />
                         <table
                             style="width:100%; margin-top:22px;">

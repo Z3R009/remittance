@@ -6,6 +6,7 @@ from odoo.exceptions import UserError
 class EmployeeCompensation(models.Model):
     _name = "employee.compensation"
     _description = "Employee Compensation"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
     employee_id = fields.Many2one(
         "hr.employee",
@@ -63,11 +64,13 @@ class EmployeeCompensation(models.Model):
     representation_allowance = fields.Monetary(
         string="Representation Allowance",
         currency_field="currency_id",
+        tracking=True
     )
 
     transportation_allowance = fields.Monetary(
         string="Transportation Allowance",
         currency_field="currency_id",
+        tracking=True
     )
 
     _unique_employee_month = models.Constraint(

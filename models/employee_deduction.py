@@ -1,11 +1,13 @@
 from odoo import fields, models, api
 from dateutil.relativedelta import relativedelta
 from odoo.exceptions import UserError
+from markupsafe import Markup
 
 class EmployeeDeduction(models.Model):
     _name = "employee.deduction"
     _description = "Employee Deductions"
     _order = "employee_id"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
     # ===== REFERENCE FIELDS =====
     employee_id = fields.Many2one(
@@ -60,67 +62,80 @@ class EmployeeDeduction(models.Model):
         string="GSIS RLIP",
         currency_field="currency_id",
         compute="_compute_gsis_rlip",
+        tracking=True,
         help="Retirement/Life Insurance/Provident"
     )
     
     gsis_conso_loan = fields.Monetary(
         string="GSIS Conso Loan",
         currency_field="currency_id",
+        tracking=True
     )
 
     gsis_mpl = fields.Monetary(
         string="GSIS MPL",
         currency_field="currency_id",
+        tracking=True
     )
     
     gsis_emergency_loan = fields.Monetary(
         string="GSIS Emergency Loan/EML",
         currency_field="currency_id",
+        tracking=True
     )
 
     gsis_computer_loan = fields.Monetary(
         string="GSIS Computer Loan",
         currency_field="currency_id",
+        tracking=True
     )
 
     gsis_educ_loan = fields.Monetary(
         string="GSIS Educational Loan",
         currency_field="currency_id",
+        tracking=True
     )
 
     gsis_solar_loan = fields.Monetary(
         string="GSIS Solar Loan",
         currency_field="currency_id",
+        tracking=True
     )
     
     gsis_policy_loan_reg = fields.Monetary(
         string="GSIS Policy Loan (Regular)",
         currency_field="currency_id",
+        tracking=True
     )
     
     gsis_policy_loan_opt = fields.Monetary(
         string="GSIS Policy Loan (Optional)",
         currency_field="currency_id",
+        tracking=True
     )
 
     gsis_opt_life_pre = fields.Monetary(
         string="GSIS OPT_LIFE/PRE",
         currency_field="currency_id",
+        tracking=True
     )
     
     gsis_mpl_lite = fields.Monetary(
         string="GSIS MPL/Lite",
         currency_field="currency_id",
+        tracking=True
     )
     
     gsis_rel = fields.Monetary(
         string="GSIS R.E.L",
         currency_field="currency_id",
+        tracking=True
     )
 
     gsis_gfal_2 = fields.Monetary(
         string="GSIS GFAL II",
         currency_field="currency_id",
+        tracking=True
     )
 
     # ===== HDMF/PAG-IBIG DEDUCTIONS (TAB 2) =====
@@ -128,26 +143,31 @@ class EmployeeDeduction(models.Model):
     hdmf_cont1 = fields.Monetary(
         string="HDMF CONT. I",
         currency_field="currency_id",
+        tracking=True
     )
 
     hdmf_mp2 = fields.Monetary(
         string="HDMF MP2/CONT. II",
         currency_field="currency_id",
+        tracking=True
     )
     
     hdmf_mpl = fields.Monetary(
         string="HDMF MPL",
         currency_field="currency_id",
+        tracking=True
     )
     
     hdmf_calamity_loan = fields.Monetary(
         string="HDMF Calamity Loan",
         currency_field="currency_id",
+        tracking=True
     )
     
     hdmf_housing = fields.Monetary(
         string="HDMF Lot/Housing",
         currency_field="currency_id",
+        tracking=True
     )
 
     # ===== OTHER DEDUCTIONS (TAB 3) =====
@@ -155,51 +175,61 @@ class EmployeeDeduction(models.Model):
     philhealth = fields.Monetary(
         string="PHILHEALTH",
         currency_field="currency_id",
+        tracking=True
     )
     
     globe = fields.Monetary(
         string="Globe",
         currency_field="currency_id",
+        tracking=True
     )
 
     dti_pf_cont = fields.Monetary(
         string="DTI-PF Cont.",
         currency_field="currency_id",
+        tracking=True
     )
     
     mdbf = fields.Monetary(
         string="MDBF",
         currency_field="currency_id",
+        tracking=True
     )
 
     dti_pf_loan = fields.Monetary(
         string="DTI-PF Loan",
         currency_field="currency_id",
+        tracking=True
     )
     
     dti_eu_dues = fields.Monetary(
         string="DTI-EU Dues",
         currency_field="currency_id",
+        tracking=True
     )
     
     lbp_dbp = fields.Monetary(
         string="LBP/DBP",
         currency_field="currency_id",
+        tracking=True
     )
 
     dti_eu_hmo = fields.Monetary(
         string="DTI-EU HMO",
         currency_field="currency_id",
+        tracking=True
     )
 
     amaphil = fields.Monetary(
         string="AMAPHIL",
         currency_field="currency_id",
+        tracking=True
     )
     
     whc = fields.Monetary(
         string="WHC",
         currency_field="currency_id",
+        tracking=True
     )
 
 
@@ -208,59 +238,59 @@ class EmployeeDeduction(models.Model):
     # action_carry_forward() auto-increments paid and auto-zeroes the
     # amount once a loan's term is complete.
 
-    gsis_conso_loan_paid = fields.Integer(string="Conso Loan - Months Paid", default=0)
-    gsis_conso_loan_term = fields.Integer(string="Conso Loan - Term (Months)", default=0)
+    gsis_conso_loan_paid = fields.Integer(string="Conso Loan - Months Paid", default=0, tracking=True)
+    gsis_conso_loan_term = fields.Integer(string="Conso Loan - Term (Months)", default=0, tracking=True)
 
-    gsis_mpl_paid = fields.Integer(string="MPL - Months Paid", default=0)
-    gsis_mpl_term = fields.Integer(string="MPL - Term (Months)", default=0)
+    gsis_mpl_paid = fields.Integer(string="MPL - Months Paid", default=0, tracking=True)
+    gsis_mpl_term = fields.Integer(string="MPL - Term (Months)", default=0, tracking=True)
 
-    gsis_emergency_loan_paid = fields.Integer(string="Emergency Loan - Months Paid", default=0)
-    gsis_emergency_loan_term = fields.Integer(string="Emergency Loan - Term (Months)", default=0)
+    gsis_emergency_loan_paid = fields.Integer(string="Emergency Loan - Months Paid", default=0, tracking=True)
+    gsis_emergency_loan_term = fields.Integer(string="Emergency Loan - Term (Months)", default=0, tracking=True)
 
-    gsis_computer_loan_paid = fields.Integer(string="Computer Loan - Months Paid", default=0)
-    gsis_computer_loan_term = fields.Integer(string="Computer Loan - Term (Months)", default=0)
+    gsis_computer_loan_paid = fields.Integer(string="Computer Loan - Months Paid", default=0, tracking=True)
+    gsis_computer_loan_term = fields.Integer(string="Computer Loan - Term (Months)", default=0, tracking=True)
 
-    gsis_educ_loan_paid = fields.Integer(string="Educational Loan - Months Paid", default=0)
-    gsis_educ_loan_term = fields.Integer(string="Educational Loan - Term (Months)", default=0)
+    gsis_educ_loan_paid = fields.Integer(string="Educational Loan - Months Paid", default=0, tracking=True)
+    gsis_educ_loan_term = fields.Integer(string="Educational Loan - Term (Months)", default=0, tracking=True)
 
-    gsis_solar_loan_paid = fields.Integer(string="Solar Loan - Months Paid", default=0)
-    gsis_solar_loan_term = fields.Integer(string="Solar Loan - Term (Months)", default=0)
+    gsis_solar_loan_paid = fields.Integer(string="Solar Loan - Months Paid", default=0, tracking=True)
+    gsis_solar_loan_term = fields.Integer(string="Solar Loan - Term (Months)", default=0, tracking=True)
 
-    gsis_policy_loan_reg_paid = fields.Integer(string="Policy Loan (Regular) - Months Paid", default=0)
-    gsis_policy_loan_reg_term = fields.Integer(string="Policy Loan (Regular) - Term (Months)", default=0)
+    gsis_policy_loan_reg_paid = fields.Integer(string="Policy Loan (Regular) - Months Paid", default=0, tracking=True)
+    gsis_policy_loan_reg_term = fields.Integer(string="Policy Loan (Regular) - Term (Months)", default=0, tracking=True)
 
-    gsis_policy_loan_opt_paid = fields.Integer(string="Policy Loan (Optional) - Months Paid", default=0)
-    gsis_policy_loan_opt_term = fields.Integer(string="Policy Loan (Optional) - Term (Months)", default=0)
+    gsis_policy_loan_opt_paid = fields.Integer(string="Policy Loan (Optional) - Months Paid", default=0, tracking=True)
+    gsis_policy_loan_opt_term = fields.Integer(string="Policy Loan (Optional) - Term (Months)", default=0, tracking=True)
 
-    gsis_opt_life_pre_paid = fields.Integer(string="OPT Life Premium - Months Paid", default=0)
-    gsis_opt_life_pre_term = fields.Integer(string="OPT Life Premium - Term (Months)", default=0)
+    gsis_opt_life_pre_paid = fields.Integer(string="OPT Life Premium - Months Paid", default=0, tracking=True)
+    gsis_opt_life_pre_term = fields.Integer(string="OPT Life Premium - Term (Months)", default=0, tracking=True)
 
-    gsis_gfal_2_paid = fields.Integer(string="GFAL II - Months Paid", default=0)
-    gsis_gfal_2_term = fields.Integer(string="GFAL II - Term (Months)", default=0)
+    gsis_gfal_2_paid = fields.Integer(string="GFAL II - Months Paid", default=0, tracking=True)
+    gsis_gfal_2_term = fields.Integer(string="GFAL II - Term (Months)", default=0, tracking=True)
 
-    gsis_mpl_lite_paid = fields.Integer(string="MPL/Lite - Months Paid", default=0)
-    gsis_mpl_lite_term = fields.Integer(string="MPL/Lite - Term (Months)", default=0)
+    gsis_mpl_lite_paid = fields.Integer(string="MPL/Lite - Months Paid", default=0, tracking=True)
+    gsis_mpl_lite_term = fields.Integer(string="MPL/Lite - Term (Months)", default=0, tracking=True)
 
-    hdmf_mpl_paid = fields.Integer(string="HDMF MPL - Months Paid", default=0)
-    hdmf_mpl_term = fields.Integer(string="HDMF MPL - Term (Months)", default=0)
+    hdmf_mpl_paid = fields.Integer(string="HDMF MPL - Months Paid", default=0, tracking=True)
+    hdmf_mpl_term = fields.Integer(string="HDMF MPL - Term (Months)", default=0, tracking=True)
 
-    hdmf_calamity_loan_paid = fields.Integer(string="Calamity Loan - Months Paid", default=0)
-    hdmf_calamity_loan_term = fields.Integer(string="Calamity Loan - Term (Months)", default=0)
+    hdmf_calamity_loan_paid = fields.Integer(string="Calamity Loan - Months Paid", default=0, tracking=True)
+    hdmf_calamity_loan_term = fields.Integer(string="Calamity Loan - Term (Months)", default=0, tracking=True)
 
-    hdmf_housing_paid = fields.Integer(string="Lot/Housing - Months Paid", default=0)
-    hdmf_housing_term = fields.Integer(string="Lot/Housing - Term (Months)", default=0)
+    hdmf_housing_paid = fields.Integer(string="Lot/Housing - Months Paid", default=0, tracking=True)
+    hdmf_housing_term = fields.Integer(string="Lot/Housing - Term (Months)", default=0, tracking=True)
 
-    dti_pf_loan_paid = fields.Integer(string="DTI-PF Loan - Months Paid", default=0)
-    dti_pf_loan_term = fields.Integer(string="DTI-PF Loan - Term (Months)", default=0)
+    dti_pf_loan_paid = fields.Integer(string="DTI-PF Loan - Months Paid", default=0, tracking=True)
+    dti_pf_loan_term = fields.Integer(string="DTI-PF Loan - Term (Months)", default=0, tracking=True)
 
-    lbp_dbp_paid = fields.Integer(string="LBP/DBP - Months Paid", default=0)
-    lbp_dbp_term = fields.Integer(string="LBP/DBP - Term (Months)", default=0)
+    lbp_dbp_paid = fields.Integer(string="LBP/DBP - Months Paid", default=0, tracking=True)
+    lbp_dbp_term = fields.Integer(string="LBP/DBP - Term (Months)", default=0, tracking=True)
 
-    amaphil_paid = fields.Integer(string="AMAPHIL - Months Paid", default=0)
-    amaphil_term = fields.Integer(string="AMAPHIL - Term (Months)", default=0)
+    amaphil_paid = fields.Integer(string="AMAPHIL - Months Paid", default=0, tracking=True)
+    amaphil_term = fields.Integer(string="AMAPHIL - Term (Months)", default=0, tracking=True)
 
-    whc_paid = fields.Integer(string="WHC - Months Paid", default=0)
-    whc_term = fields.Integer(string="WHC - Term (Months)", default=0)
+    whc_paid = fields.Integer(string="WHC - Months Paid", default=0, tracking=True)
+    whc_term = fields.Integer(string="WHC - Term (Months)", default=0, tracking=True)
 
     # ===== COMPUTED TOTALS =====
     total_gsis = fields.Monetary(
@@ -335,23 +365,34 @@ class EmployeeDeduction(models.Model):
             'amaphil', 'whc',
         ]
         loan_updates = {}
+        log_lines = []
         for fname in loan_fields:
             if self[fname]:
                 paid_field = fname + '_paid'
                 term_field = fname + '_term'
                 old_paid = self[paid_field] or 0
                 term = self[term_field] or 0
+                label = self._fields[fname].string
 
                 if term and old_paid >= term:
                     # Last month was already the final payment (e.g. 10/10)
                     # — this month gets no deduction, and paid stops climbing.
                     loan_updates[fname] = 0
+                    log_lines.append("%s: fully paid (%s/%s) \u2014 deduction stopped" % (label, old_paid, term))
                 else:
                     # Still within term, including the exact final month
                     # (9/10 -> 10/10 still deducts this time).
-                    loan_updates[paid_field] = old_paid + 1
+                    new_paid = old_paid + 1
+                    loan_updates[paid_field] = new_paid
+                    if term:
+                        log_lines.append("%s: %s/%s \u2192 %s/%s" % (label, old_paid, term, new_paid, term))
         if loan_updates:
             new_deduction.write(loan_updates)
+
+        if log_lines:
+            header = Markup("Carried forward from %s. Loan progress:<br/>") % self.payroll_month.strftime('%B %Y')
+            body_html = header + Markup("<br/>").join(Markup.escape(line) for line in log_lines)
+            new_deduction.message_post(body=body_html)
 
         # Carry the matching Take Home Pay record forward too
         old_take_home = self.env['take.home.pay'].search([

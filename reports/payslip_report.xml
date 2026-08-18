@@ -411,10 +411,7 @@
                 <t t-set="label">DTI-EU Monthly Dues</t>
                 <t t-set="value" t-value="o.dti_eu_dues" />
             </t>
-            <t t-call="remittance.payslip_line">
-                <t t-set="label">DTI-HMO</t>
-                <t t-set="value" t-value="o.dti_eu_hmo" />
-            </t>
+
             <t t-call="remittance.payslip_line">
                 <t t-set="label">
                     <span style="display:flex; justify-content:space-between; width:100%;">

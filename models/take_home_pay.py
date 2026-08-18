@@ -494,6 +494,7 @@ class TakeHomePay(models.Model):
 
 
 
+
     @api.model
     def create(self, vals_list):
         for vals in vals_list:
