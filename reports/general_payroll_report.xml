@@ -18,7 +18,7 @@
     <!-- Reusable single value + optional loan paid/term badge -->
     <template id="gp_value">
         <t t-if="value">
-            <t t-if="changed">
+            <t t-if="value_changed">
                 <span style="background-color:yellow;">
                     <t t-esc="'{:,.2f}'.format(value)" />
                 </span>
@@ -29,9 +29,16 @@
         </t>
         <t t-else="">-</t>
         <br />
-        <span style="color:#900; font-size:6px;">
-            <t t-esc="paid" />/<t t-esc="term" />
-        </span>
+        <t t-if="badge_changed">
+            <span style="background-color:yellow; color:#900; font-size:6px;">
+                <t t-esc="paid" />/<t t-esc="term" />
+            </span>
+        </t>
+        <t t-else="">
+            <span style="color:#900; font-size:6px;">
+                <t t-esc="paid" />/<t t-esc="term" />
+            </span>
+        </t>
     </template>
 
     <template id="report_general_payroll_document">
@@ -134,6 +141,10 @@
                 </thead>
                 <tbody>
                     <t t-foreach="recs" t-as="rec">
+                        <t t-set="prev_month"
+                            t-value="(rec.payroll_month - datetime.timedelta(days=1)).replace(day=1)" />
+                        <t t-set="prev_ded"
+                            t-value="env['employee.deduction'].search([('employee_id', '=', rec.employee_id.id), ('payroll_month', '=', prev_month)], limit=1)" />
                         <tr>
                             <td>
                                 <b>
@@ -173,12 +184,20 @@
                                     <t t-set="value" t-value="rec.gsis_conso_loan" />
                                     <t t-set="paid" t-value="rec.gsis_conso_loan_paid" />
                                     <t t-set="term" t-value="rec.gsis_conso_loan_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_conso_loan != (prev_ded.gsis_conso_loan if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_conso_loan_paid != (prev_ded.gsis_conso_loan_paid if prev_ded else 0)) or (rec.gsis_conso_loan_term != (prev_ded.gsis_conso_loan_term if prev_ded else 0))" />
                                 </t>
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-call="remittance.gp_value">
                                     <t t-set="value" t-value="rec.gsis_mpl" />
                                     <t t-set="paid" t-value="rec.gsis_mpl_paid" />
                                     <t t-set="term" t-value="rec.gsis_mpl_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_mpl != (prev_ded.gsis_mpl if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_mpl_paid != (prev_ded.gsis_mpl_paid if prev_ded else 0)) or (rec.gsis_mpl_term != (prev_ded.gsis_mpl_term if prev_ded else 0))" />
                                 </t>
                             </td>
 
@@ -187,12 +206,20 @@
                                     <t t-set="value" t-value="rec.gsis_emergency_loan" />
                                     <t t-set="paid" t-value="rec.gsis_emergency_loan_paid" />
                                     <t t-set="term" t-value="rec.gsis_emergency_loan_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_emergency_loan != (prev_ded.gsis_emergency_loan if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_emergency_loan_paid != (prev_ded.gsis_emergency_loan_paid if prev_ded else 0)) or (rec.gsis_emergency_loan_term != (prev_ded.gsis_emergency_loan_term if prev_ded else 0))" />
                                 </t>
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-call="remittance.gp_value">
                                     <t t-set="value" t-value="rec.gsis_computer_loan" />
                                     <t t-set="paid" t-value="rec.gsis_computer_loan_paid" />
                                     <t t-set="term" t-value="rec.gsis_computer_loan_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_computer_loan != (prev_ded.gsis_computer_loan if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_computer_loan_paid != (prev_ded.gsis_computer_loan_paid if prev_ded else 0)) or (rec.gsis_computer_loan_term != (prev_ded.gsis_computer_loan_term if prev_ded else 0))" />
                                 </t>
                             </td>
 
@@ -201,6 +228,11 @@
                                     <t t-set="value" t-value="rec.gsis_educ_loan" />
                                     <t t-set="paid" t-value="rec.gsis_educ_loan_paid" />
                                     <t t-set="term" t-value="rec.gsis_educ_loan_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_educ_loan != (prev_ded.gsis_educ_loan if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_educ_loan_paid != (prev_ded.gsis_educ_loan_paid if prev_ded else 0)) or (rec.gsis_educ_loan_term != (prev_ded.gsis_educ_loan_term if prev_ded else 0))" />
+
                                 </t>
                             </td>
 
@@ -209,6 +241,10 @@
                                     <t t-set="value" t-value="rec.gsis_solar_loan" />
                                     <t t-set="paid" t-value="rec.gsis_solar_loan_paid" />
                                     <t t-set="term" t-value="rec.gsis_solar_loan_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_solar_loan != (prev_ded.gsis_solar_loan if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_solar_loan_paid != (prev_ded.gsis_solar_loan_paid if prev_ded else 0)) or (rec.gsis_solar_loan_term != (prev_ded.gsis_solar_loan_term if prev_ded else 0))" />
                                 </t>
                             </td>
 
@@ -217,12 +253,22 @@
                                     <t t-set="value" t-value="rec.gsis_policy_loan_reg" />
                                     <t t-set="paid" t-value="rec.gsis_policy_loan_reg_paid" />
                                     <t t-set="term" t-value="rec.gsis_policy_loan_reg_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_policy_loan_reg != (prev_ded.gsis_policy_loan_reg if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_policy_loan_reg_paid != (prev_ded.gsis_policy_loan_reg_paid if prev_ded else 0)) or (rec.gsis_policy_loan_reg_term != (prev_ded.gsis_policy_loan_reg_term if prev_ded else 0))" />
+
                                 </t>
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-call="remittance.gp_value">
                                     <t t-set="value" t-value="rec.gsis_policy_loan_opt" />
                                     <t t-set="paid" t-value="rec.gsis_policy_loan_opt_paid" />
                                     <t t-set="term" t-value="rec.gsis_policy_loan_opt_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_policy_loan_opt != (prev_ded.gsis_policy_loan_opt if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_policy_loan_opt_paid != (prev_ded.gsis_policy_loan_opt_paid if prev_ded else 0)) or (rec.gsis_policy_loan_opt_term != (prev_ded.gsis_policy_loan_opt_term if prev_ded else 0))" />
+
                                 </t>
                             </td>
 
@@ -231,12 +277,24 @@
                                     <t t-set="value" t-value="rec.gsis_opt_life_pre" />
                                     <t t-set="paid" t-value="rec.gsis_opt_life_pre_paid" />
                                     <t t-set="term" t-value="rec.gsis_opt_life_pre_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_opt_life_pre != (prev_ded.gsis_opt_life_pre if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_opt_life_pre_paid != (prev_ded.gsis_opt_life_pre_paid if prev_ded else 0)) or (rec.gsis_opt_life_pre_term != (prev_ded.gsis_opt_life_pre_term if prev_ded else 0))" />
+
                                 </t>
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-call="remittance.gp_value">
                                     <t t-set="value" t-value="rec.gsis_mpl_lite" />
-                                    <t t-set="paid" t-value="rec.gsis_mpl_lite_paid" />
-                                    <t t-set="term" t-value="rec.gsis_mpl_lite_term" />
+                                    <t t-set="paid"
+                                        t-value="rec.gsis_mpl_lite_paid" />
+                                    <t t-set="term"
+                                        t-value="rec.gsis_mpl_lite_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_mpl_lite != (prev_ded.gsis_mpl_lite if prev_ded else 0)" />
+                                    <t
+                                        t-set="badge_changed"
+                                        t-value="(rec.gsis_mpl_lite_paid != (prev_ded.gsis_mpl_lite_paid if prev_ded else 0)) or (rec.gsis_mpl_lite_term != (prev_ded.gsis_mpl_lite_term if prev_ded else 0))" />
                                 </t>
                             </td>
 
@@ -249,6 +307,11 @@
                                     <t t-set="value" t-value="rec.gsis_gfal_2" />
                                     <t t-set="paid" t-value="rec.gsis_gfal_2_paid" />
                                     <t t-set="term" t-value="rec.gsis_gfal_2_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_gfal_2 != (prev_ded.gsis_gfal_2 if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.gsis_gfal_2_paid != (prev_ded.gsis_gfal_2_paid if prev_ded else 0)) or (rec.gsis_gfal_2_term != (prev_ded.gsis_gfal_2_term if prev_ded else 0))" />
+
                                 </t>
                             </td>
 
@@ -264,12 +327,22 @@
                                     <t t-set="value" t-value="rec.hdmf_mpl" />
                                     <t t-set="paid" t-value="rec.hdmf_mpl_paid" />
                                     <t t-set="term" t-value="rec.hdmf_mpl_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.hdmf_mpl != (prev_ded.hdmf_mpl if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.hdmf_mpl_paid != (prev_ded.hdmf_mpl_paid if prev_ded else 0)) or (rec.hdmf_mpl_term != (prev_ded.hdmf_mpl_term if prev_ded else 0))" />
+
                                 </t>
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-call="remittance.gp_value">
                                     <t t-set="value" t-value="rec.hdmf_calamity_loan" />
                                     <t t-set="paid" t-value="rec.hdmf_calamity_loan_paid" />
                                     <t t-set="term" t-value="rec.hdmf_calamity_loan_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.hdmf_calamity_loan != (prev_ded.hdmf_calamity_loan if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.hdmf_calamity_loan_paid != (prev_ded.hdmf_calamity_loan_paid if prev_ded else 0)) or (rec.hdmf_calamity_loan_term != (prev_ded.hdmf_calamity_loan_term if prev_ded else 0))" />
+
                                 </t>
                             </td>
 
@@ -278,6 +351,11 @@
                                     <t t-set="value" t-value="rec.hdmf_housing" />
                                     <t t-set="paid" t-value="rec.hdmf_housing_paid" />
                                     <t t-set="term" t-value="rec.hdmf_housing_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.hdmf_housing != (prev_ded.hdmf_housing if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.hdmf_housing_paid != (prev_ded.hdmf_housing_paid if prev_ded else 0)) or (rec.hdmf_housing_term != (prev_ded.hdmf_housing_term if prev_ded else 0))" />
+
                                 </t>
                             </td>
 
@@ -296,6 +374,11 @@
                                     <t t-set="value" t-value="rec.dti_pf_loan" />
                                     <t t-set="paid" t-value="rec.dti_pf_loan_paid" />
                                     <t t-set="term" t-value="rec.dti_pf_loan_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.dti_pf_loan != (prev_ded.dti_pf_loan if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.dti_pf_loan_paid != (prev_ded.dti_pf_loan_paid if prev_ded else 0)) or (rec.dti_pf_loan_term != (prev_ded.dti_pf_loan_term if prev_ded else 0))" />
+
                                 </t>
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-esc="'{:,.2f}'.format(rec.dti_eu_dues or 0)" />
@@ -306,6 +389,11 @@
                                     <t t-set="value" t-value="rec.lbp_dbp" />
                                     <t t-set="paid" t-value="rec.lbp_dbp_paid" />
                                     <t t-set="term" t-value="rec.lbp_dbp_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.lbp_dbp != (prev_ded.lbp_dbp if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.lbp_dbp_paid != (prev_ded.lbp_dbp_paid if prev_ded else 0)) or (rec.lbp_dbp_term != (prev_ded.lbp_dbp_term if prev_ded else 0))" />
+
                                 </t>
                                 <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
                                 <t t-esc="'{:,.2f}'.format(rec.dti_eu_hmo or 0)" />
@@ -316,14 +404,26 @@
                                     <t t-set="value" t-value="rec.amaphil" />
                                     <t t-set="paid" t-value="rec.amaphil_paid" />
                                     <t t-set="term" t-value="rec.amaphil_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.amaphil != (prev_ded.amaphil if prev_ded else 0)" />
+                                    <t t-set="badge_changed"
+                                        t-value="(rec.amaphil_paid != (prev_ded.amaphil_paid if prev_ded else 0)) or (rec.amaphil_term != (prev_ded.amaphil_term if prev_ded else 0))" />
+
                                 </t>
                             </td>
 
                             <td style="text-align:right;">
                                 <t t-call="remittance.gp_value">
                                     <t t-set="value" t-value="rec.whc" />
-                                    <t t-set="paid" t-value="rec.whc_paid" />
-                                    <t t-set="term" t-value="rec.whc_term" />
+                                    <t t-set="paid"
+                                        t-value="rec.whc_paid" />
+                                    <t t-set="term"
+                                        t-value="rec.whc_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.whc != (prev_ded.whc if prev_ded else 0)" />
+                                    <t
+                                        t-set="badge_changed"
+                                        t-value="(rec.whc_paid != (prev_ded.whc_paid if prev_ded else 0)) or (rec.whc_term != (prev_ded.whc_term if prev_ded else 0))" />
                                 </t>
                             </td>
 
