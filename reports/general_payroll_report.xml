@@ -436,10 +436,10 @@
                             </td>
 
                             <td style="text-align:right; font-weight:bold;">
-                                <t t-esc="'{:,.2f}'.format(rec.total_net_1st or 0)" />
+                                <t t-esc="'{:,.3f}'.format(rec.total_net_1st or 0)" />
                             </td>
                             <td style="text-align:right; font-weight:bold;">
-                                <t t-esc="'{:,.2f}'.format(rec.total_net_2nd or 0)" />
+                                <t t-esc="'{:,.3f}'.format(rec.total_net_2nd or 0)" />
                             </td>
 
                             <td></td>
@@ -533,10 +533,10 @@
                             <t t-esc="'{:,.2f}'.format(sum(recs.mapped('total_deductions')))" />
                         </td>
                         <td style="text-align:right;">
-                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('total_net_1st')))" />
+                            <t t-esc="'{:,.3f}'.format(sum(recs.mapped('total_net_1st')))" />
                         </td>
                         <td style="text-align:right;">
-                            <t t-esc="'{:,.2f}'.format(sum(recs.mapped('total_net_2nd')))" />
+                            <t t-esc="'{:,.3f}'.format(sum(recs.mapped('total_net_2nd')))" />
                         </td>
                         <td></td>
                     </tr>

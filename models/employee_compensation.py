@@ -42,11 +42,13 @@ class EmployeeCompensation(models.Model):
     basic_salary = fields.Monetary(
         string="Basic Salary",
         currency_field="currency_id",
+        tracking=True
     )
 
     pera = fields.Monetary(
         string="PERA",
         currency_field="currency_id",
+        tracking=True 
     )
 
     gross_earnings = fields.Monetary(
@@ -54,11 +56,13 @@ class EmployeeCompensation(models.Model):
         compute="_compute_gross_earnings",
         store=True,
         currency_field="currency_id",
+        tracking=True
     )
 
     withholding_tax = fields.Monetary(
         string="Withholding Tax",
         currency_field="currency_id",
+        tracking=True
     )
 
     representation_allowance = fields.Monetary(

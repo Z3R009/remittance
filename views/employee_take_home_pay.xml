@@ -12,8 +12,8 @@
                 <field name="gross_earnings" />
                 <field name="total_deductions" />
                 <field name="total_net_take_home_pay" />
-                <field name="total_net_1st" />
-                <field name="total_net_2nd" />
+                <field name="total_net_1st" widget="monetary" />
+                <field name="total_net_2nd" widget="monetary" />
             </list>
         </field>
     </record>
@@ -46,8 +46,8 @@
                     </group>
                     <group string="Net Pay">
                         <field name="total_net_take_home_pay" readonly="1" />
-                        <field name="total_net_1st" readonly="1" />
-                        <field name="total_net_2nd" readonly="1" />
+                        <field name="total_net_1st" readonly="1" widget="monetary" />
+                        <field name="total_net_2nd" readonly="1" widget="monetary" />
                     </group>
                 </sheet>
             </form>

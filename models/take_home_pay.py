@@ -345,25 +345,28 @@ class TakeHomePay(models.Model):
         currency_field="currency_id",
     )
 
-    total_net_1st= fields.Monetary(
+    total_net_1st = fields.Float(
         string="1st Half",
         compute="_compute_total_net_1st",
         store=True,
-        currency_field="currency_id",
+        digits=(16, 3),
+        help="Kept at 3 decimal places internally; payslip/payroll printouts round to 2 for display.",
     )
 
-    total_net_2nd= fields.Monetary(
+    total_net_2nd = fields.Float(
         string="2nd Half",
         compute="_compute_total_net_2nd",
         store=True,
-        currency_field="currency_id",
+        digits=(16, 3),
+        help="Kept at 3 decimal places internally; payslip/payroll printouts round to 2 for display.",
     )
 
-    total_net_1st_payslip= fields.Monetary(
+    total_net_1st_payslip = fields.Float(
         string="1st Half Payslip",
         compute="_compute_total_net_1st_payslip",
         store=True,
-        currency_field="currency_id",
+        digits=(16, 3),
+        help="Kept at 3 decimal places internally; payslip/payroll printouts round to 2 for display.",
     )
 
     # compute
@@ -420,7 +423,7 @@ class TakeHomePay(models.Model):
     
     def _compute_total_net_1st(self):
         for rec in self:
-            rec.total_net_1st = (
+            rec.total_net_1st = round((
                 (
                     (rec.basic_salary or 0) +
                     (rec.pera or 0) -
@@ -454,25 +457,26 @@ class TakeHomePay(models.Model):
                     (rec.amaphil or 0) -
                     (rec.whc or 0)
                 ) / 2
-            )
+            ), 3)
 
     @api.depends('gross_earnings', 'total_deductions')
     def _compute_total_net_2nd(self):
         for rec in self:
-            rec.total_net_2nd = (
+            rec.total_net_2nd = round((
             (
                 (rec.gross_earnings or 0) - 
                 (rec.total_deductions or 0)
             )
-            ) / 2
+            ) / 2, 3)
 
     @api.depends('total_net_1st', 'representation_allowance', 'transportation_allowance')
     def _compute_total_net_1st_payslip(self):
         for rec in self:
-            rec.total_net_1st_payslip = (
+            rec.total_net_1st_payslip = round(
                 (rec.total_net_1st or 0) +
                 (rec.representation_allowance or 0) +
-                (rec.transportation_allowance or 0)
+                (rec.transportation_allowance or 0),
+                3
             )
 
     @api.depends('gross_earnings', 'representation_allowance', 'transportation_allowance')
