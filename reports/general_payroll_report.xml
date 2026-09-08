@@ -4,12 +4,14 @@
     <record id="paperformat_general_payroll" model="report.paperformat">
         <field name="name">General Payroll</field>
         <field name="default" eval="False" />
-        <field name="format">A4</field>
+        <field name="format">custom</field>
+        <field name="page_width">216</field>
+        <field name="page_height">330</field>
         <field name="orientation">Landscape</field>
         <field name="margin_top">3</field>
+        <field name="margin_left">15</field>
+        <field name="margin_right">0</field>
         <field name="margin_bottom">3</field>
-        <field name="margin_left">4</field>
-        <field name="margin_right">4</field>
         <field name="header_line" eval="False" />
         <field name="header_spacing">0</field>
         <field name="dpi">90</field>
@@ -110,21 +112,21 @@
                         <td>BASIC<br />Salary</td>
                         <td>PERA</td>
                         <td>GROSS<br />EARNINGS</td>
-                        <td>W/HOLDING<br />TAX</td>
+                        <td> W/HOLDING<br />TAX</td>
 
                         <td>RLIP</td>
                         <td>CONSOLOAN<br />MPL</td>
-                        <td>EML<br />CMPL</td>
+                        <td>EML<br /> CMPL</td>
                         <td>EDUC'L<br />LOAN</td>
                         <td>SOLAR<br />LOAN</td>
-                        <td>POLICY LOAN<br />REG/OPT</td>
+                        <td>POLICY LOAN<br /> REG/OPT</td>
                         <td>OPT_LIFE/PRE<br />MPL LITE</td>
-                        <td>R.E.L.</td>
+                        <td>R.E.L.<br />BIKE / E-MOBILITY</td>
                         <td>GFAL II</td>
 
                         <td>CONT.I</td>
                         <td>CONT.II</td>
-                        <td>MPL<br />Calamity</td>
+                        <td>MPL<br /> Calamity</td>
                         <td>LOT/<br />Housing</td>
 
                         <td>PHIC<br />CONT</td>
@@ -300,6 +302,20 @@
 
                             <td style="text-align:right;">
                                 <t t-esc="'{:,.2f}'.format(rec.gsis_rel or 0)" />
+
+                                <hr style="margin:1px 0; border:0; border-top:1px solid #333;" />
+                                <t t-call="remittance.gp_value">
+                                    <t t-set="value" t-value="rec.gsis_e_bike" />
+                                    <t t-set="paid"
+                                        t-value="rec.gsis_e_bike_paid" />
+                                    <t t-set="term"
+                                        t-value="rec.gsis_e_bike_term" />
+                                    <t t-set="value_changed"
+                                        t-value="rec.gsis_e_bike != (prev_ded.gsis_e_bike if prev_ded else 0)" />
+                                    <t
+                                        t-set="badge_changed"
+                                        t-value="(rec.gsis_e_bike_paid != (prev_ded.gsis_e_bike_paid if prev_ded else 0)) or (rec.gsis_e_bike_term != (prev_ded.gsis_e_bike_term if prev_ded else 0))" />
+                                </t>
                             </td>
 
                             <td style="text-align:right;">

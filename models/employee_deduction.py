@@ -132,6 +132,12 @@ class EmployeeDeduction(models.Model):
         tracking=True
     )
 
+    gsis_e_bike = fields.Monetary(
+            string="GSIS Bike/E-Mobility",
+            currency_field="currency_id",
+            tracking=True
+        )
+
     gsis_gfal_2 = fields.Monetary(
         string="GSIS GFAL II",
         currency_field="currency_id",
@@ -264,6 +270,9 @@ class EmployeeDeduction(models.Model):
 
     gsis_opt_life_pre_paid = fields.Integer(string="OPT Life Premium - Months Paid", default=0, tracking=True)
     gsis_opt_life_pre_term = fields.Integer(string="OPT Life Premium - Term (Months)", default=0, tracking=True)
+
+    gsis_e_bike_paid = fields.Integer(string="GSIS Bike/E-Mobility - Months Paid", default=0, tracking=True)
+    gsis_e_bike_term = fields.Integer(string="GSIS Bike/E-Mobility - Term (Months)", default=0, tracking=True)
 
     gsis_gfal_2_paid = fields.Integer(string="GFAL II - Months Paid", default=0, tracking=True)
     gsis_gfal_2_term = fields.Integer(string="GFAL II - Term (Months)", default=0, tracking=True)
@@ -423,7 +432,7 @@ class EmployeeDeduction(models.Model):
     # ===== COMPUTATIONS =====
     @api.depends(
         'gsis_rlip', 'gsis_conso_loan', 'gsis_mpl', 'gsis_emergency_loan', 'gsis_computer_loan', 'gsis_educ_loan', 'gsis_solar_loan',
-         'gsis_policy_loan_reg', 'gsis_policy_loan_opt', 'gsis_opt_life_pre', 'gsis_mpl_lite', 'gsis_rel', 'gsis_gfal_2'
+         'gsis_policy_loan_reg', 'gsis_policy_loan_opt', 'gsis_opt_life_pre', 'gsis_mpl_lite', 'gsis_rel', 'gsis_e_bike', 'gsis_gfal_2'
     )
     def _compute_total_gsis(self):
         for rec in self:
@@ -440,6 +449,7 @@ class EmployeeDeduction(models.Model):
                 (rec.gsis_opt_life_pre or 0) +
                 (rec.gsis_mpl_lite or 0) +
                 (rec.gsis_rel or 0) +
+                (rec.gsis_e_bike or 0) +
                 (rec.gsis_gfal_2 or 0) 
             )
 

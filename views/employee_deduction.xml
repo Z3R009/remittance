@@ -179,6 +179,18 @@
 
 
                                         <group>
+                                            <field name="gsis_e_bike" />
+                                            <field name="gsis_e_bike_paid" />
+                                            <field name="gsis_e_bike_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
                                             <field name="gsis_gfal_2" />
                                             <field name="gsis_gfal_2_paid" />
                                             <field name="gsis_gfal_2_term" />
@@ -330,7 +342,7 @@
                     </notebook>
                 </sheet>
 
-                <chatter/>
+                <chatter />
 
             </form>
         </field>
