@@ -27,5 +27,17 @@
         action="action_take_home_pay"
         sequence="40" />
 
+    <menuitem
+        id="menu_remittance_config"
+        name="Configuration"
+        parent="menu_remittance_root"
+        sequence="90" />
+
+    <menuitem
+        id="menu_general_payroll_number"
+        name="Saved Payroll Numbers"
+        parent="menu_remittance_config"
+        action="action_general_payroll_number"
+        sequence="20" />
 
 </odoo>

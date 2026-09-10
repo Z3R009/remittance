@@ -1,0 +1,39 @@
+<odoo>
+
+    <record id="view_general_payroll_wizard_form" model="ir.ui.view">
+        <field name="name">general.payroll.wizard.form</field>
+        <field name="model">general.payroll.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print General Payroll">
+                <group>
+                    <field name="payroll_no" placeholder="e.g. GP-NC 2026-08-003" />
+                </group>
+                <footer>
+                    <button name="action_print" type="object" string="Print" class="btn-primary" />
+                    <button string="Cancel" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_general_payroll_wizard_thp" model="ir.actions.act_window">
+        <field name="name">Print General Payroll</field>
+        <field name="res_model">general.payroll.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_take_home_pay" />
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+    <record id="action_general_payroll_wizard_comp" model="ir.actions.act_window">
+        <field name="name">Print General Payroll</field>
+        <field name="res_model">general.payroll.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_employee_compensation" />
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+</odoo>

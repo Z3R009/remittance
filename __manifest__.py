@@ -15,6 +15,8 @@
         'security/ir.model.access.csv',
         'reports/payslip_report.xml',
         'reports/general_payroll_report.xml',
+        'views/general_payroll_wizard_views.xml',
+        'views/general_payroll_number_views.xml',
         'views/employee_deduction.xml',
         'views/employee_compensation.xml',
         'views/employee_take_home_pay.xml',
