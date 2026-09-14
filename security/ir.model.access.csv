@@ -13,3 +13,5 @@ access_take_home_pay_user,Take Home Pay - User,model_take_home_pay,base.group_us
 access_take_home_pay_manager,Take Home Pay - Manager,model_take_home_pay,base.group_system,1,1,1,0
 
 access_general_payroll_number_user,General Payroll Number - User,model_general_payroll_number,base.group_user,1,1,1,1
+
+access_employee_refund_user,Employee Refund - User,model_employee_refund,base.group_user,1,1,1,1

@@ -1,0 +1,205 @@
+<odoo>
+
+    <record id="paperformat_refund" model="report.paperformat">
+        <field name="name">Deductions for Refund</field>
+        <field name="default" eval="False" />
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">6</field>
+        <field name="margin_bottom">6</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="report_refund_document">
+        <t t-call="web.html_container">
+            <div class="page" style="font-family: Arial, sans-serif; font-size:9px;">
+
+                <div style="text-align:center;">
+                    <div style="font-size:16px; font-weight:bold;">Deductions FOR REFUND</div>
+                    <div style="font-weight:bold;"> FOR THE MONTH OF <t
+                            t-esc="docs[:1].payroll_month.strftime('%B %Y').upper() if docs else ''" />
+                    </div>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; margin-top:10px;" border="1">
+                    <thead>
+                        <tr style="text-align:center; font-weight:bold;">
+                            <td rowspan="2" style="width:14%;">Name of Employee</td>
+                            <td colspan="8">GSIS</td>
+                            <td colspan="5">HDMF</td>
+                            <td rowspan="2">DTI-PF<br />Loan</td>
+                            <td rowspan="2">LBP<br />Salary</td>
+                            <td rowspan="2">GLOBE</td>
+                            <td rowspan="2">TOTAL</td>
+                        </tr>
+                        <tr style="text-align:center; font-weight:bold;">
+                            <td>MPL</td>
+                            <td>Emergency<br />Loan</td>
+                            <td>PS<br />overdeduction</td>
+                            <td>Educational<br />Assistance Loan</td>
+                            <td>PL -<br />Regular</td>
+                            <td>MPL<br />LITE</td>
+                            <td>Real Estate<br />Loan (REL)</td>
+                            <td>GFAL II</td>
+                            <td>MP 2</td>
+                            <td>MPL</td>
+                            <td>Calamity</td>
+                            <td>HL</td>
+                            <td>Housing</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="rec">
+                            <tr>
+                                <td>
+                                    <t t-esc="rec.employee_name" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_mpl or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_emergency_loan or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_ps_overdeduction or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_educ_loan or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_policy_loan_reg or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_mpl_lite or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_rel or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_gfal_2 or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_hdmf_mp2 or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_hdmf_mpl or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_hdmf_calamity or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_hdmf_hl or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_hdmf_housing or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_dti_pf_loan or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_lbp_dbp or 0)" />
+                                </td>
+                                <td style="text-align:right;">
+                                    <t t-esc="'{:,.2f}'.format(rec.refund_globe or 0)" />
+                                </td>
+                                <td style="text-align:right; font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(rec.total_refund or 0)" />
+                                </td>
+                            </tr>
+                        </t>
+                        <tr style="font-weight:bold;">
+                            <td>TOTAL</td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_mpl')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t
+                                    t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_emergency_loan')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t
+                                    t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_ps_overdeduction')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_educ_loan')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t
+                                    t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_policy_loan_reg')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_mpl_lite')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_rel')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_gfal_2')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_hdmf_mp2')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_hdmf_mpl')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t
+                                    t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_hdmf_calamity')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_hdmf_hl')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_hdmf_housing')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_dti_pf_loan')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_lbp_dbp')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('refund_globe')))" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(sum(docs.mapped('total_refund')))" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table style="width:100%; margin-top:30px; font-size:10px;">
+                    <tr>
+                        <td style="width:50%;"> Prepared by: <div
+                                style="margin-top:30px; font-weight:bold;">CHARLEY JAY SUCGANG</div>
+                            <div>Accountant
+                            II</div>
+                        </td>
+                        <td> Certified Correct: <div style="margin-top:30px; font-weight:bold;">NEIL
+                            ANTHONY T. MORALA</div>
+                            <div>Accountant III</div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_refund" model="ir.actions.report">
+        <field name="name">Deductions for Refund</field>
+        <field name="model">employee.refund</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_refund_document</field>
+        <field name="report_file">remittance.report_refund_document</field>
+        <field name="print_report_name">'Deductions for Refund'</field>
+        <field name="paperformat_id" ref="paperformat_refund" />
+        <field name="binding_model_id" ref="model_employee_refund" />
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>
