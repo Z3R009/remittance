@@ -1,0 +1,245 @@
+<odoo>
+
+    <record id="paperformat_payroll_summary" model="report.paperformat">
+        <field name="name">Payroll Summary</field>
+        <field name="default" eval="False" />
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">6</field>
+        <field name="margin_bottom">6</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="payroll_summary_page">
+        <div class="page" style="font-family: Arial, sans-serif; font-size:8px;">
+            <div style="text-align:center; font-weight:bold; font-size:12px;">SUMMARY</div>
+            <div style="text-align:center; font-weight:bold; margin-bottom:6px;">
+                <t t-esc="page_title" /> — FOR THE MONTH OF <t t-esc="month_label" />
+            </div>
+
+            <table style="width:100%; border-collapse:collapse;" border="1">
+                <thead>
+                    <tr style="font-weight:bold; text-align:center; background-color:#f0f0f0;">
+                        <td style="width:12%;">OFFICES</td>
+                        <td>BASIC SALARY</td>
+                        <td>PERA</td>
+                        <t t-foreach="page['headers']" t-as="h">
+                            <td>
+                                <t t-esc="h" />
+                            </td>
+                        </t>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="page['rows']" t-as="row">
+                        <tr>
+                            <td>
+                                <t t-esc="row['name']" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(row['basic_salary'])" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(row['pera'])" />
+                            </td>
+                            <t t-foreach="row['values']" t-as="v">
+                                <td style="text-align:right;">
+                                    <t t-if="v">
+                                        <t t-esc="'{:,.2f}'.format(v)" />
+                                    </t>
+                                    <t t-else="">-</t>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+
+                    <tr style="font-weight:bold; background-color:#00b0f0;">
+                        <td>TOTAL</td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['total_main']['basic_salary'])" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['total_main']['pera'])" />
+                        </td>
+                        <t t-foreach="page['total_main']['values']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                                <t t-else="">-</t>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <tr style="background-color:#ffff00;">
+                        <td>NC TIDA</td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['nc_row']['basic_salary'])" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['nc_row']['pera'])" />
+                        </td>
+                        <t t-foreach="page['nc_row']['values']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <tr style="background-color:#ffff00;">
+                        <td>CARP</td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['carp_row']['basic_salary'])" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['carp_row']['pera'])" />
+                        </td>
+                        <t t-foreach="page['carp_row']['values']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <t t-foreach="page['adj_rows']" t-as="arow">
+                        <tr style="background-color:#e6b8b7;">
+                            <td>
+                                <t t-esc="arow['name']" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-if="arow['basic_salary']">
+                                    <t t-esc="'{:,.2f}'.format(arow['basic_salary'])" />
+                                </t>
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-if="arow['pera']">
+                                    <t t-esc="'{:,.2f}'.format(arow['pera'])" />
+                                </t>
+                            </td>
+                            <t t-foreach="arow['values']" t-as="v">
+                                <td style="text-align:right;">
+                                    <t t-if="v">
+                                        <t t-esc="'{:,.2f}'.format(v)" />
+                                    </t>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+
+                    <tr style="font-weight:bold; background-color:#ffc000;">
+                        <td>GRAND TOTAL</td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['grand_total']['basic_salary'])" />
+                        </td>
+                        <td style="text-align:right;">
+                            <t t-esc="'{:,.2f}'.format(page['grand_total']['pera'])" />
+                        </td>
+                        <t t-foreach="page['grand_total']['values']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                                <t t-else="">-</t>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <tr style="background-color:#c9b1d9;">
+                        <td>REFUND</td>
+                        <td></td>
+                        <td></td>
+                        <t t-foreach="page['refund']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <tr style="background-color:#e6b8b7;">
+                        <td>REMITTANCE</td>
+                        <td></td>
+                        <td></td>
+                        <t t-foreach="page['remittance']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <tr style="background-color:#dce6f1;">
+                        <td>GOVERNMENT SHARE</td>
+                        <td></td>
+                        <td></td>
+                        <t t-foreach="page['gov_share']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <tr style="background-color:#c4d79b;">
+                        <td>DIFFERENCE</td>
+                        <td></td>
+                        <td></td>
+                        <t t-foreach="page['difference']" t-as="v">
+                            <td style="text-align:right;">
+                                <t t-if="v">
+                                    <t t-esc="'{:,.2f}'.format(v)" />
+                                </t>
+                                <t t-else="">-</t>
+                            </td>
+                        </t>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template id="report_payroll_summary">
+        <t t-call="web.html_container">
+
+            <t t-call="remittance.payroll_summary_page">
+                <t t-set="page" t-value="pages['page1']" />
+                <t t-set="page_title" t-value="'OTHER DEDUCTIONS'" />
+            </t>
+            <p style="page-break-after: always;" />
+
+            <t t-call="remittance.payroll_summary_page">
+                <t t-set="page" t-value="pages['page2']" />
+                <t t-set="page_title" t-value="'GSIS DETAILS'" />
+            </t>
+            <p style="page-break-after: always;" />
+
+            <t t-call="remittance.payroll_summary_page">
+                <t t-set="page" t-value="pages['page3']" />
+                <t t-set="page_title" t-value="'HDMF DETAILS'" />
+            </t>
+
+        </t>
+    </template>
+
+    <record id="action_report_payroll_summary" model="ir.actions.report">
+        <field name="name">Payroll Summary</field>
+        <field name="model">payroll.summary.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_payroll_summary</field>
+        <field name="report_file">remittance.report_payroll_summary</field>
+        <field name="print_report_name">'Payroll Summary'</field>
+        <field name="paperformat_id" ref="paperformat_payroll_summary" />
+    </record>
+
+</odoo>

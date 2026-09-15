@@ -16,6 +16,8 @@
         'reports/payslip_report.xml',
         'reports/general_payroll_report.xml',
         'reports/refund_report.xml',
+        'reports/payroll_summary_report.xml',
+        'views/government_share_views.xml',
         'views/general_payroll_wizard_views.xml',
         'views/general_payroll_number_views.xml',
         'views/employee_refund_views.xml',

@@ -44,18 +44,42 @@ class EmployeeDeduction(models.Model):
     )
 
     basic_salary = fields.Monetary(
-            string="Basic Salary",
-            currency_field="currency_id",
-            related="employee_id.wage",
-        )
+        string="Basic Salary",
+        currency_field="currency_id",
+        compute="_compute_basic_salary",
+        store=True,
+        readonly=True,
+        help="Pulled from this employee's Compensation record for the same payroll month.",
+    )
+
+    @api.depends('employee_id', 'payroll_month')
+    def _compute_basic_salary(self):
+        for rec in self:
+            comp = self.env['employee.compensation'].search([
+                ('employee_id', '=', rec.employee_id.id),
+                ('payroll_month', '=', rec.payroll_month),
+            ], limit=1)
+            rec.basic_salary = comp.basic_salary if comp else 0.0
 
     withholding_tax = fields.Monetary(
-    string="Withholding Tax",
-    related="employee_id.withholding_tax",
-    currency_field="currency_id",
-    readonly=True,
-    store=True,
-)
+        string="Withholding Tax",
+        currency_field="currency_id",
+        compute="_compute_withholding_tax",
+        store=True,
+        readonly=True,
+        help="Pulled from this employee's Compensation record for the same payroll month.",
+    )
+
+    @api.depends('employee_id', 'payroll_month')
+    def _compute_withholding_tax(self):
+        for rec in self:
+            comp = self.env['employee.compensation'].search([
+                ('employee_id', '=', rec.employee_id.id),
+                ('payroll_month', '=', rec.payroll_month),
+            ], limit=1)
+            rec.withholding_tax = comp.withholding_tax if comp else 0.0
+
+            
 
     # ===== GSIS DEDUCTIONS (TAB 1) =====
     gsis_rlip = fields.Monetary(

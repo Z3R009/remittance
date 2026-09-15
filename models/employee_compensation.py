@@ -97,7 +97,7 @@ class EmployeeCompensation(models.Model):
                 rec.department_id = rec.employee_id.department_id
 
     def write(self, vals):
-        protected_fields = {'basic_salary', 'pera', 'withholding_tax', 'employee_id', 'payroll_month'}
+        protected_fields = {'basic_salary', 'pera', 'withholding_tax', 'employee_id', 'payroll_month', 'department_id'}
         if protected_fields.intersection(vals.keys()):
             for rec in self:
                 if rec.locked:
@@ -105,7 +105,22 @@ class EmployeeCompensation(models.Model):
                         "This payroll month (%s) is locked for %s. Unlock it first to make changes."
                         % (rec.payroll_month.strftime('%B %Y'), rec.employee_id.name)
                     )
-        return super().write(vals)
+        res = super().write(vals)
+
+        
+        if 'basic_salary' in vals or 'withholding_tax' in vals:
+            for rec in self:
+                deduction = self.env['employee.deduction'].search([
+                    ('employee_id', '=', rec.employee_id.id),
+                    ('payroll_month', '=', rec.payroll_month),
+                ], limit=1)
+                if deduction:
+                    if 'basic_salary' in vals:
+                        deduction._compute_basic_salary()
+                    if 'withholding_tax' in vals:
+                        deduction._compute_withholding_tax()
+
+        return res  
 
     def action_lock(self):
         self.write({'locked': True})

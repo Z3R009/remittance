@@ -15,3 +15,9 @@ access_take_home_pay_manager,Take Home Pay - Manager,model_take_home_pay,base.gr
 access_general_payroll_number_user,General Payroll Number - User,model_general_payroll_number,base.group_user,1,1,1,1
 
 access_employee_refund_user,Employee Refund - User,model_employee_refund,base.group_user,1,1,1,1
+
+access_government_share_user,Government Share - User,model_government_share,base.group_user,1,1,1,1
+access_payroll_summary_wizard_user,Payroll Summary Wizard - User,model_payroll_summary_wizard,base.group_user,1,1,1,1
+
+access_payroll_summary_adjustment_user,Summary Adjustment - User,model_payroll_summary_adjustment,base.group_user,1,1,1,1
+access_payroll_summary_adjustment_line_user,Summary Adjustment Line - User,model_payroll_summary_adjustment_line,base.group_user,1,1,1,1

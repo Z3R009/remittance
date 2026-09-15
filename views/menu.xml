@@ -35,10 +35,31 @@
         sequence="50" />
 
     <menuitem
+        id="menu_payroll_summary"
+        name="Summary"
+        parent="menu_remittance_root"
+        action="action_payroll_summary_wizard"
+        sequence="60" />
+
+    <menuitem
         id="menu_remittance_config"
         name="Configuration"
         parent="menu_remittance_root"
         sequence="90" />
+
+    <menuitem
+        id="menu_government_share"
+        name="Government Share"
+        parent="menu_remittance_config"
+        action="action_government_share"
+        sequence="30" />
+
+    <menuitem
+        id="menu_payroll_summary_adjustment"
+        name="Summary Adjustments"
+        parent="menu_remittance_config"
+        action="action_payroll_summary_adjustment"
+        sequence="40" />
 
     <menuitem
         id="menu_general_payroll_number"
