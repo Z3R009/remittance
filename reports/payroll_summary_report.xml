@@ -16,9 +16,10 @@
 
     <template id="payroll_summary_page">
         <div class="page" style="font-family: Arial, sans-serif; font-size:8px;">
-            <div style="text-align:center; font-weight:bold; font-size:12px;">SUMMARY</div>
-            <div style="text-align:center; font-weight:bold; margin-bottom:6px;">
-                <t t-esc="page_title" /> — FOR THE MONTH OF <t t-esc="month_label" />
+            <div style="text-align:center; font-weight:bold; font-size:20px;">SUMMARY</div>
+            <div style="text-align:center; font-size:18px; font-weight:bold; margin-bottom:6px;">
+                <t t-esc="page_title" /> FOR THE MONTH OF <t
+                    t-esc="month_label" />
             </div>
 
             <table style="width:100%; border-collapse:collapse;" border="1">
@@ -57,7 +58,7 @@
                         </tr>
                     </t>
 
-                    <tr style="font-weight:bold; background-color:#00b0f0;">
+                    <tr style="font-weight:bold; background-color:#ffff00;">
                         <td>TOTAL</td>
                         <td style="text-align:right;">
                             <t t-esc="'{:,.2f}'.format(page['total_main']['basic_salary'])" />
@@ -75,8 +76,31 @@
                         </t>
                     </tr>
 
-                    <tr style="background-color:#ffff00;">
-                        <td>NC TIDA</td>
+
+                    <t t-foreach="page['nc_dept_rows']" t-as="row">
+                        <tr>
+                            <td>
+                                <t t-esc="row['name']" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(row['basic_salary'])" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(row['pera'])" />
+                            </td>
+                            <t t-foreach="row['values']" t-as="v">
+                                <td style="text-align:right;">
+                                    <t t-if="v">
+                                        <t t-esc="'{:,.2f}'.format(v)" />
+                                    </t>
+                                    <t t-else="">-</t>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+
+                    <tr style="background-color:#ffff00; font-weight:bold;">
+                        <td>NC TIDA TOTAL</td>
                         <td style="text-align:right;">
                             <t t-esc="'{:,.2f}'.format(page['nc_row']['basic_salary'])" />
                         </td>
@@ -92,8 +116,31 @@
                         </t>
                     </tr>
 
-                    <tr style="background-color:#ffff00;">
-                        <td>CARP</td>
+
+                    <t t-foreach="page['carp_dept_rows']" t-as="row">
+                        <tr>
+                            <td>
+                                <t t-esc="row['name']" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(row['basic_salary'])" />
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-esc="'{:,.2f}'.format(row['pera'])" />
+                            </td>
+                            <t t-foreach="row['values']" t-as="v">
+                                <td style="text-align:right;">
+                                    <t t-if="v">
+                                        <t t-esc="'{:,.2f}'.format(v)" />
+                                    </t>
+                                    <t t-else="">-</t>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+
+                    <tr style="background-color:#ffff00; font-weight:bold;">
+                        <td>CARP TOTAL</td>
                         <td style="text-align:right;">
                             <t t-esc="'{:,.2f}'.format(page['carp_row']['basic_salary'])" />
                         </td>

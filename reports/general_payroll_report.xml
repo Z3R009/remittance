@@ -48,6 +48,10 @@
         <t t-set="today_str"
             t-value="'%s/%s/%s' % (datetime.date.today().month, datetime.date.today().day, datetime.date.today().year)" />
         <t t-set="grand_total_net" t-value="sum(recs.mapped('net_pay_payslip'))" />
+        <t t-set="top_dept"
+            t-value="recs[:1].employee_id.department_id.get_top_parent() if recs and recs[:1].employee_id.department_id else False" />
+        <t t-set="payroll_no_match"
+            t-value="env['general.payroll.number'].search([('department_ids', 'in', [top_dept.id]), ('payroll_month', '=', recs[:1].payroll_month)], limit=1) if top_dept and recs else env['general.payroll.number']" />
 
         <div style="font-family: Arial, sans-serif; font-size:8px;">
 
@@ -147,6 +151,12 @@
                             t-value="(rec.payroll_month - datetime.timedelta(days=1)).replace(day=1)" />
                         <t t-set="prev_ded"
                             t-value="env['employee.deduction'].search([('employee_id', '=', rec.employee_id.id), ('payroll_month', '=', prev_month)], limit=1)" />
+                        <t t-set="prev_comp"
+                            t-value="env['employee.compensation'].search([('employee_id', '=', rec.employee_id.id), ('payroll_month', '=', prev_month)], limit=1)" />
+                        <t t-set="pera_total"
+                            t-value="(rec.pera or 0) + (rec.representation_allowance or 0) + (rec.transportation_allowance or 0)" />
+                        <t t-set="prev_pera_total"
+                            t-value="(prev_comp.pera or 0) + (prev_comp.representation_allowance or 0) + (prev_comp.transportation_allowance or 0) if prev_comp else 0" />
                         <tr>
                             <td>
                                 <b>
@@ -164,17 +174,47 @@
                             </td>
 
                             <td style="text-align:right;">
-                                <t t-esc="'{:,.2f}'.format(rec.basic_salary or 0)" />
+                                <t
+                                    t-if="rec.basic_salary != (prev_comp.basic_salary if prev_comp else 0)">
+                                    <span style="background-color:yellow;">
+                                        <t t-esc="'{:,.2f}'.format(rec.basic_salary or 0)" />
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="'{:,.2f}'.format(rec.basic_salary or 0)" />
+                                </t>
+                            </td>
+                            <td style="text-align:right;">
+                                <t t-if="pera_total != prev_pera_total">
+                                    <span style="background-color:yellow;">
+                                        <t t-esc="'{:,.2f}'.format(pera_total)" />
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="'{:,.2f}'.format(pera_total)" />
+                                </t>
                             </td>
                             <td style="text-align:right;">
                                 <t
-                                    t-esc="'{:,.2f}'.format((rec.pera or 0) + (rec.representation_allowance or 0) + (rec.transportation_allowance or 0))" />
+                                    t-if="rec.gross_earnings != (prev_comp.gross_earnings if prev_comp else 0)">
+                                    <span style="background-color:yellow;">
+                                        <t t-esc="'{:,.2f}'.format(rec.gross_earnings or 0)" />
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="'{:,.2f}'.format(rec.gross_earnings or 0)" />
+                                </t>
                             </td>
                             <td style="text-align:right;">
-                                <t t-esc="'{:,.2f}'.format(rec.gross_earnings or 0)" />
-                            </td>
-                            <td style="text-align:right;">
-                                <t t-esc="'{:,.2f}'.format(rec.withholding_tax or 0)" />
+                                <t
+                                    t-if="rec.withholding_tax != (prev_comp.withholding_tax if prev_comp else 0)">
+                                    <span style="background-color:yellow;">
+                                        <t t-esc="'{:,.2f}'.format(rec.withholding_tax or 0)" />
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="'{:,.2f}'.format(rec.withholding_tax or 0)" />
+                                </t>
                             </td>
 
                             <td style="text-align:right;">
@@ -621,8 +661,8 @@
                     <td rowspan="2"
                         style="width:22%;  padding-left:6px; padding-top:3px;">
                         <div style="color:#900; font-weight:bold;"> Payroll No. <t
-                                t-if="data and data.get('payroll_no')">
-                                <t t-esc="data.get('payroll_no')" />
+                                t-if="payroll_no_match">
+                                <t t-esc="payroll_no_match.payroll_no" />
                             </t>
                             <t
                                 t-else="">___________________</t>
@@ -698,7 +738,7 @@
         </t>
     </template>
 
-    <!-- <record id="action_report_general_payroll" model="ir.actions.report">
+    <record id="action_report_general_payroll" model="ir.actions.report">
         <field name="name">General Payroll</field>
         <field name="model">take.home.pay</field>
         <field name="report_type">qweb-pdf</field>
@@ -706,7 +746,9 @@
         <field name="report_file">remittance.report_general_payroll</field>
         <field name="print_report_name">'General Payroll'</field>
         <field name="paperformat_id" ref="paperformat_general_payroll" />
-    </record> -->
+        <field name="binding_model_id" ref="model_take_home_pay" />
+        <field name="binding_type">report</field>
+    </record>
 
     <template id="report_general_payroll_bulk">
         <t t-call="web.html_container">
@@ -726,6 +768,8 @@
         <field name="report_file">remittance.report_general_payroll_bulk</field>
         <field name="print_report_name">'General Payroll'</field>
         <field name="paperformat_id" ref="paperformat_general_payroll" />
+        <field name="binding_model_id" ref="model_employee_compensation" />
+        <field name="binding_type">report</field>
     </record>
 
 </odoo>

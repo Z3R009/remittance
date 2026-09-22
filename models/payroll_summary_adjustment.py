@@ -41,7 +41,7 @@ class PayrollSummaryAdjustment(models.Model):
     name = fields.Char(
         string="Label",
         required=True,
-        help="Shown as the row label, e.g. 'DOSEJO AMAPHIL (LAST PAY)'",
+        help="Shown as the row label, e.g. 'NAME DETAILS'",
     )
 
     payroll_month = fields.Date(

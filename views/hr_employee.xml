@@ -52,6 +52,7 @@
         <field name="arch" type="xml">
             <field name="parent_id" position="after">
                 <field name="summary_section" />
+                <field name="summary_sequence" />
             </field>
         </field>
     </record>

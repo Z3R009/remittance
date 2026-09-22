@@ -1,6 +1,3 @@
-from odoo import models
-
-
 from odoo import fields, models
 
 
@@ -16,6 +13,12 @@ class HrDepartment(models.Model):
         string="Summary Section",
         default='main',
         help="Which block this office appears under on the Payroll Summary report.",
+    )
+
+    summary_sequence = fields.Integer(
+        string="Summary Order",
+        default=10,
+        help="Controls row order within its section on the Payroll Summary report. Lower shows first.",
     )
 
     def get_top_parent(self):

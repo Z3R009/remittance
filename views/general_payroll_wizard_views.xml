@@ -17,23 +17,17 @@
     </record>
 
     <record id="action_general_payroll_wizard_thp" model="ir.actions.act_window">
-        <field name="name">Print General Payroll</field>
+        <field name="name">Print General Payroll (wizard, unused)</field>
         <field name="res_model">general.payroll.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="binding_model_id" ref="model_take_home_pay" />
-        <field name="binding_type">action</field>
-        <field name="binding_view_types">list,form</field>
     </record>
 
     <record id="action_general_payroll_wizard_comp" model="ir.actions.act_window">
-        <field name="name">Print General Payroll</field>
+        <field name="name">Print General Payroll (wizard, unused)</field>
         <field name="res_model">general.payroll.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="binding_model_id" ref="model_employee_compensation" />
-        <field name="binding_type">action</field>
-        <field name="binding_view_types">list,form</field>
     </record>
 
 </odoo>

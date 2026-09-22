@@ -55,6 +55,13 @@
         sequence="30" />
 
     <menuitem
+        id="menu_remittance_amount"
+        name="Remittance"
+        parent="menu_remittance_config"
+        action="action_remittance_amount"
+        sequence="35" />
+
+    <menuitem
         id="menu_payroll_summary_adjustment"
         name="Summary Adjustments"
         parent="menu_remittance_config"
