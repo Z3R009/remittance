@@ -130,47 +130,63 @@ class EmployeeCompensation(models.Model):
 
     def action_carry_forward(self):
         self.ensure_one()
+
         next_month = self.payroll_month + relativedelta(months=1)
 
         existing = self.search([
             ('employee_id', '=', self.employee_id.id),
             ('payroll_month', '=', next_month),
         ], limit=1)
+
         if existing:
             raise UserError(
                 "%s already has a compensation record for %s."
-                % (self.employee_id.name, next_month.strftime('%B %Y'))
+                % (
+                    self.employee_id.name,
+                    next_month.strftime('%B %Y')
+                )
             )
 
-        # Fresh values pulled from the employee record NOW — not copied from
-        # this old record — so a wage change only affects the new month.
-        # skip_auto_related_records: don't let create() auto-generate a
-        # blank Deduction/Take Home Pay here — we carry the real ones
-        # forward properly below instead.
-        new_comp = self.with_context(skip_auto_related_records=True).create({
+        # Carry forward the CURRENT compensation values.
+        # Do NOT get these values from hr.employee.
+        new_comp = self.with_context(
+            skip_auto_related_records=True
+        ).create({
             'employee_id': self.employee_id.id,
             'payroll_month': next_month,
+
+            # Carry forward from this month's compensation
+            'basic_salary': self.basic_salary,
+            'pera': self.pera,
+            'withholding_tax': self.withholding_tax,
+
+            # Keep the current department
+            'department_id': self.department_id.id,
         })
 
-        # Cascade: carry the matching Deduction (and its Take Home Pay) forward too
+        # Cascade: carry the matching Deduction forward
         old_deduction = self.env['employee.deduction'].search([
             ('employee_id', '=', self.employee_id.id),
             ('payroll_month', '=', self.payroll_month),
         ], limit=1)
+
         if old_deduction:
             next_deduction_exists = self.env['employee.deduction'].search([
                 ('employee_id', '=', self.employee_id.id),
                 ('payroll_month', '=', next_month),
             ], limit=1)
+
             if not next_deduction_exists:
                 old_deduction.action_carry_forward()
+
         else:
-            # No deduction existed for the old month either — create blank
-            # ones so Compensation/Deduction/Take Home Pay stay in sync.
+            # No deduction existed for the old month.
+            # Create blank deduction and take-home-pay records.
             deduction = self.env['employee.deduction'].create({
                 'employee_id': self.employee_id.id,
                 'payroll_month': next_month,
             })
+
             self.env['take.home.pay'].create({
                 'employee_id': self.employee_id.id,
                 'payroll_month': next_month,
@@ -200,10 +216,29 @@ class EmployeeCompensation(models.Model):
         for vals in vals_list:
             if vals.get('employee_id'):
                 employee = self.env['hr.employee'].browse(vals['employee_id'])
-                vals.setdefault('basic_salary', employee.wage or 0)
-                vals.setdefault('pera', employee.pera or 0)
-                vals.setdefault('withholding_tax', employee.withholding_tax or 0)
-                vals.setdefault('department_id', employee.department_id.id)
+
+                # Only use hr.employee for the initial/default salary.
+                # Carry-forward explicitly supplies basic_salary, so
+                # setdefault() will NOT overwrite it.
+                vals.setdefault(
+                    'basic_salary',
+                    employee.wage or 0
+                )
+
+                vals.setdefault(
+                    'pera',
+                    employee.pera or 0
+                )
+
+                vals.setdefault(
+                    'withholding_tax',
+                    employee.withholding_tax or 0
+                )
+
+                vals.setdefault(
+                    'department_id',
+                    employee.department_id.id
+                )
 
         records = super().create(vals_list)
 
@@ -213,10 +248,12 @@ class EmployeeCompensation(models.Model):
         for record in records:
             if record.employee_id:
                 Deduction = self.env["employee.deduction"]
+
                 deduction = Deduction.search([
                     ("employee_id", "=", record.employee_id.id),
                     ("payroll_month", "=", record.payroll_month),
                 ], limit=1)
+
                 if not deduction:
                     deduction = Deduction.create({
                         "employee_id": record.employee_id.id,
@@ -224,10 +261,12 @@ class EmployeeCompensation(models.Model):
                     })
 
                 TakeHome = self.env["take.home.pay"]
+
                 take_home = TakeHome.search([
                     ("employee_id", "=", record.employee_id.id),
                     ("payroll_month", "=", record.payroll_month),
                 ], limit=1)
+
                 if not take_home:
                     TakeHome.create({
                         "employee_id": record.employee_id.id,

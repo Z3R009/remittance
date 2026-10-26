@@ -200,6 +200,12 @@ class EmployeeDeduction(models.Model):
         tracking=True
     )
 
+    hdmf_saf = fields.Monetary(
+        string="HDMF SAF",
+        currency_field="currency_id",
+        tracking=True
+    )
+
     # ===== OTHER DEDUCTIONS (TAB 3) =====
 
     philhealth = fields.Monetary(
@@ -313,6 +319,9 @@ class EmployeeDeduction(models.Model):
     hdmf_housing_paid = fields.Integer(string="Lot/Housing - Months Paid", default=0, tracking=True)
     hdmf_housing_term = fields.Integer(string="Lot/Housing - Term (Months)", default=0, tracking=True)
 
+    hdmf_saf_paid = fields.Integer(string="HDMF SAF - Months Paid", default=0, tracking=True)
+    hdmf_saf_term = fields.Integer(string="HDMF SAF - Term (Months)", default=0, tracking=True)
+
     dti_pf_loan_paid = fields.Integer(string="DTI-PF Loan - Months Paid", default=0, tracking=True)
     dti_pf_loan_term = fields.Integer(string="DTI-PF Loan - Term (Months)", default=0, tracking=True)
 
@@ -393,8 +402,8 @@ class EmployeeDeduction(models.Model):
         loan_fields = [
             'gsis_conso_loan', 'gsis_mpl', 'gsis_emergency_loan', 'gsis_computer_loan',
             'gsis_educ_loan', 'gsis_solar_loan', 'gsis_policy_loan_reg', 'gsis_policy_loan_opt',
-            'gsis_opt_life_pre', 'gsis_gfal_2', 'gsis_mpl_lite', 'hdmf_mpl',
-            'hdmf_calamity_loan', 'hdmf_housing', 'dti_pf_loan', 'lbp_dbp',
+            'gsis_opt_life_pre', 'gsis_gfal_2', 'gsis_mpl_lite', 'hdmf_mpl', 'hdmf_saf',
+            'hdmf_calamity_loan', 'hdmf_housing', 'hdmf_saf', 'dti_pf_loan', 'lbp_dbp',
             'amaphil', 'whc',
         ]
         loan_updates = {}
@@ -477,7 +486,7 @@ class EmployeeDeduction(models.Model):
                 (rec.gsis_gfal_2 or 0) 
             )
 
-    @api.depends('hdmf_cont1', 'hdmf_mp2', 'hdmf_mpl', 'hdmf_calamity_loan', 'hdmf_housing')
+    @api.depends('hdmf_cont1', 'hdmf_mp2', 'hdmf_mpl', 'hdmf_calamity_loan', 'hdmf_housing', 'hdmf_saf')
     def _compute_total_hdmf(self):
         for rec in self:
             rec.total_hdmf = (
@@ -485,7 +494,8 @@ class EmployeeDeduction(models.Model):
                 (rec.hdmf_mp2 or 0) +
                 (rec.hdmf_mpl or 0) +
                 (rec.hdmf_calamity_loan or 0) +
-                (rec.hdmf_housing or 0)
+                (rec.hdmf_housing or 0) +
+                (rec.hdmf_saf or 0)
             )
 
     @api.depends(

@@ -1,4 +1,5 @@
 from odoo import api, fields, models
+from .print_helpers import OO_PROGRAMS
 
 
 class HrEmployee(models.Model):
@@ -6,6 +7,18 @@ class HrEmployee(models.Model):
 
     employee_number = fields.Char(
         string="Employee Number",
+    )
+
+    plantilla_item_no = fields.Char(string="Plantilla Item No.")
+
+    salary_grade = fields.Integer(string="Salary Grade")
+
+    salary_step = fields.Integer(string="Step")
+    
+    oo_program = fields.Selection(
+        [(key, title) for key, title, _label in OO_PROGRAMS],
+        string="OO / Program",
+        help="Program this plantilla item is charged to; groups the PER OO print.",
     )
 
     pera = fields.Monetary(

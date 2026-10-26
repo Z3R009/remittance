@@ -256,6 +256,19 @@
                                 </group>
 
                                 <group>
+                                    <div class="oe_title bg-light rounded p-3">
+
+
+                                        <group>
+
+                                            <field name="hdmf_saf" />
+                                            <field name="hdmf_saf_paid" />
+                                            <field name="hdmf_saf_term" />
+                                        </group>
+                                    </div>
+                                </group>
+
+                                <group>
                                     <field name="hdmf_cont1" />
                                     <field name="hdmf_mp2" />
                                 </group>

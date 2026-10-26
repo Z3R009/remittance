@@ -218,6 +218,12 @@ class TakeHomePay(models.Model):
         currency_field="currency_id",
     )
 
+    hdmf_saf = fields.Monetary(
+        string="HDMF SAF",
+        related="employee_deduction_id.hdmf_saf",
+        currency_field="currency_id",
+    )
+
     philhealth = fields.Monetary(
         string="PHILHEALTH",
         related="employee_deduction_id.philhealth",
@@ -326,6 +332,9 @@ class TakeHomePay(models.Model):
     hdmf_housing_paid = fields.Integer(related="employee_deduction_id.hdmf_housing_paid")
     hdmf_housing_term = fields.Integer(related="employee_deduction_id.hdmf_housing_term")
 
+    hdmf_saf_paid = fields.Integer(related="employee_deduction_id.hdmf_saf_paid")
+    hdmf_saf_term = fields.Integer(related="employee_deduction_id.hdmf_saf_term")
+
     dti_pf_loan_paid = fields.Integer(related="employee_deduction_id.dti_pf_loan_paid")
     dti_pf_loan_term = fields.Integer(related="employee_deduction_id.dti_pf_loan_term")
 
@@ -382,7 +391,7 @@ class TakeHomePay(models.Model):
 
     @api.depends('basic_salary', 'pera', 'gross_earnings', 'representation_allowance', 'transportation_allowance', 'withholding_tax', 'total_deductions', 'gsis_rlip', 'gsis_conso_loan', 'gsis_mpl', 'gsis_emergency_loan', 'gsis_emergency_loan', 'gsis_computer_loan', 'gsis_educ_loan', 'gsis_solar_loan', 'gsis_policy_loan_reg', 'gsis_policy_loan_opt',
                  'gsis_opt_life_pre', 'gsis_mpl_lite', 'gsis_rel', 'gsis_gfal_2', 'gsis_e_bike',
-                 'hdmf_cont1', 'hdmf_mp2', 'hdmf_mpl', 'hdmf_calamity_loan', 'hdmf_housing', 
+                 'hdmf_cont1', 'hdmf_mp2', 'hdmf_mpl', 'hdmf_calamity_loan', 'hdmf_housing', 'hdmf_saf',
                  'philhealth', 'globe', 'dti_pf_cont', 'mdbf', 'dti_pf_loan', 'dti_eu_dues', 'lbp_dbp', 'dti_eu_hmo', 'amaphil', 'whc')
 
     def _compute_total_net_take_home_pay(self):
@@ -413,6 +422,7 @@ class TakeHomePay(models.Model):
                     (rec.hdmf_mpl or 0) -
                     (rec.hdmf_calamity_loan or 0) -
                     (rec.hdmf_housing or 0) -
+                    (rec.hdmf_saf or 0) -
                     (rec.philhealth or 0) -
                     (rec.globe or 0) -
                     (rec.dti_pf_cont or 0) -
@@ -428,7 +438,7 @@ class TakeHomePay(models.Model):
 
     @api.depends('basic_salary', 'pera', 'gross_earnings', 'withholding_tax', 'total_deductions', 'gsis_rlip', 'gsis_conso_loan', 'gsis_mpl', 'gsis_emergency_loan', 'gsis_emergency_loan', 'gsis_computer_loan', 'gsis_educ_loan', 'gsis_solar_loan', 'gsis_policy_loan_reg', 'gsis_policy_loan_opt',
                  'gsis_opt_life_pre', 'gsis_mpl_lite', 'gsis_rel', 'gsis_gfal_2', 'gsis_e_bike',
-                 'hdmf_cont1', 'hdmf_mp2', 'hdmf_mpl', 'hdmf_calamity_loan', 'hdmf_housing', 
+                 'hdmf_cont1', 'hdmf_mp2', 'hdmf_mpl', 'hdmf_calamity_loan', 'hdmf_housing', 'hdmf_saf',
                  'philhealth', 'globe', 'dti_pf_cont', 'mdbf', 'dti_pf_loan', 'dti_eu_dues', 'lbp_dbp', 'dti_eu_hmo', 'amaphil', 'whc')
     
     def _compute_total_net_1st(self):
@@ -457,6 +467,7 @@ class TakeHomePay(models.Model):
                     (rec.hdmf_mpl or 0) -
                     (rec.hdmf_calamity_loan or 0) -
                     (rec.hdmf_housing or 0) -
+                    (rec.hdmf_saf or 0) -
                     (rec.philhealth or 0) -
                     (rec.globe or 0) -
                     (rec.dti_pf_cont or 0) -

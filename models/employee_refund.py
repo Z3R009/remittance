@@ -5,6 +5,7 @@ class EmployeeRefund(models.Model):
     _name = "employee.refund"
     _description = "Deduction Refund"
     _order = "payroll_month desc, employee_id"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
     employee_id = fields.Many2one(
         "hr.employee",
@@ -48,29 +49,30 @@ class EmployeeRefund(models.Model):
     reason = fields.Text(
         string="Reason",
         help="Why this refund is being issued.",
+        tracking=True,
     )
 
     # ===== GSIS =====
-    refund_mpl = fields.Monetary(string="MPL", currency_field="currency_id")
-    refund_emergency_loan = fields.Monetary(string="Emergency Loan", currency_field="currency_id")
-    refund_ps_overdeduction = fields.Monetary(string="PS Overdeduction", currency_field="currency_id")
-    refund_educ_loan = fields.Monetary(string="Educational Assistance Loan", currency_field="currency_id")
-    refund_policy_loan_reg = fields.Monetary(string="PL - Regular", currency_field="currency_id")
-    refund_mpl_lite = fields.Monetary(string="MPL LITE", currency_field="currency_id")
-    refund_rel = fields.Monetary(string="Real Estate Loan (REL)", currency_field="currency_id")
-    refund_gfal_2 = fields.Monetary(string="GFAL II", currency_field="currency_id")
+    refund_mpl = fields.Monetary(string="MPL", currency_field="currency_id", tracking=True)
+    refund_emergency_loan = fields.Monetary(string="Emergency Loan", currency_field="currency_id", tracking=True)
+    refund_ps_overdeduction = fields.Monetary(string="PS Overdeduction", currency_field="currency_id", tracking=True)
+    refund_educ_loan = fields.Monetary(string="Educational Assistance Loan", currency_field="currency_id", tracking=True)
+    refund_policy_loan_reg = fields.Monetary(string="PL - Regular", currency_field="currency_id", tracking=True)
+    refund_mpl_lite = fields.Monetary(string="MPL LITE", currency_field="currency_id", tracking=True)
+    refund_rel = fields.Monetary(string="Real Estate Loan (REL)", currency_field="currency_id", tracking=True)
+    refund_gfal_2 = fields.Monetary(string="GFAL II", currency_field="currency_id", tracking=True)
 
     # ===== HDMF =====
-    refund_hdmf_mp2 = fields.Monetary(string="MP 2", currency_field="currency_id")
-    refund_hdmf_mpl = fields.Monetary(string="MPL (HDMF)", currency_field="currency_id")
-    refund_hdmf_calamity = fields.Monetary(string="Calamity", currency_field="currency_id")
-    refund_hdmf_hl = fields.Monetary(string="HL", currency_field="currency_id")
-    refund_hdmf_housing = fields.Monetary(string="Housing", currency_field="currency_id")
+    refund_hdmf_mp2 = fields.Monetary(string="MP 2", currency_field="currency_id", tracking=True)
+    refund_hdmf_mpl = fields.Monetary(string="MPL (HDMF)", currency_field="currency_id", tracking=True)
+    refund_hdmf_calamity = fields.Monetary(string="Calamity", currency_field="currency_id", tracking=True)
+    refund_hdmf_hl = fields.Monetary(string="HL", currency_field="currency_id", tracking=True)
+    refund_hdmf_housing = fields.Monetary(string="Housing", currency_field="currency_id", tracking=True)
 
     # ===== OTHER =====
-    refund_dti_pf_loan = fields.Monetary(string="DTI-PF Loan", currency_field="currency_id")
-    refund_lbp_dbp = fields.Monetary(string="LBP Salary", currency_field="currency_id")
-    refund_globe = fields.Monetary(string="GLOBE", currency_field="currency_id")
+    refund_dti_pf_loan = fields.Monetary(string="DTI-PF Loan", currency_field="currency_id", tracking=True)
+    refund_lbp_dbp = fields.Monetary(string="LBP Salary", currency_field="currency_id", tracking=True)
+    refund_globe = fields.Monetary(string="GLOBE", currency_field="currency_id", tracking=True)
 
     total_refund = fields.Monetary(
         string="Total",

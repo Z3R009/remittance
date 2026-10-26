@@ -1,0 +1,516 @@
+<odoo>
+
+    <!-- ============================ PACSVAL ============================ -->
+    <record id="paperformat_pacsval" model="report.paperformat">
+        <field name="name">PACSVAL</field>
+        <field name="default" eval="False" />
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">8</field>
+        <field name="margin_bottom">8</field>
+        <field name="margin_left">6</field>
+        <field name="margin_right">6</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="report_pacsval">
+        <t t-call="web.html_container">
+            <div class="page" style="font-family: Arial, sans-serif; font-size:9px;">
+                <div style="text-align:center; font-weight:bold; font-size:12px; margin-bottom:6px;">
+                    <t t-esc="month_title" />
+                </div>
+                <table style="width:100%; border-collapse:collapse; table-layout:fixed;" border="1">
+                    <colgroup>
+                        <col style="width:5%;" />
+                        <col style="width:31%;" />
+                        <col style="width:10%;" />
+                        <col style="width:10%;" />
+                        <col style="width:11%;" />
+                        <col style="width:11%;" />
+                        <col style="width:11%;" />
+                        <col style="width:11%;" />
+                    </colgroup>
+                    <thead style="display:table-header-group;">
+                        <tr style="font-weight:bold; text-align:center; background-color:#f0f0f0;">
+                            <td></td>
+                            <td>NAME OF INCUMBENT</td>
+                            <td>Rep. Allowance</td>
+                            <td>Transpo. Allowance</td>
+                            <td>1ST HALF</td>
+                            <td>TOTAL 1ST HALF</td>
+                            <td>2ND HALF</td>
+                            <td>TOTAL</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="lines" t-as="line">
+                            <tr style="page-break-inside: avoid;">
+                                <td style="text-align:center;">
+                                    <t t-esc="line['no']" />
+                                </td>
+                                <td style="padding-left:3px;">
+                                    <t t-esc="line['name']" />
+                                </td>
+                                <td style="text-align:right; padding-right:3px;">
+                                    <t t-esc="fmt(line['ra'], True)" />
+                                </td>
+                                <td style="text-align:right; padding-right:3px;">
+                                    <t t-esc="fmt(line['ta'], True)" />
+                                </td>
+                                <td style="text-align:right; padding-right:3px;">
+                                    <t t-esc="fmt(line['first'])" />
+                                </td>
+                                <td style="text-align:right; padding-right:3px;">
+                                    <t t-esc="fmt(line['first_total'])" />
+                                </td>
+                                <td style="text-align:right; padding-right:3px;">
+                                    <t t-esc="fmt(line['second'])" />
+                                </td>
+                                <td style="text-align:right; padding-right:3px;">
+                                    <t t-esc="fmt(line['total'])" />
+                                </td>
+                            </tr>
+                        </t>
+                        <tr style="font-weight:bold; background-color:#f0f0f0;">
+                            <td></td>
+                            <td style="padding-left:3px;">TOTAL</td>
+                            <td style="text-align:right; padding-right:3px;">
+                                <t t-esc="fmt(totals['ra'])" />
+                            </td>
+                            <td style="text-align:right; padding-right:3px;">
+                                <t t-esc="fmt(totals['ta'])" />
+                            </td>
+                            <td style="text-align:right; padding-right:3px;">
+                                <t t-esc="fmt(totals['first'])" />
+                            </td>
+                            <td style="text-align:right; padding-right:3px;">
+                                <t t-esc="fmt(totals['first_total'])" />
+                            </td>
+                            <td style="text-align:right; padding-right:3px;">
+                                <t t-esc="fmt(totals['second'])" />
+                            </td>
+                            <td style="text-align:right; padding-right:3px;">
+                                <t t-esc="fmt(totals['total'])" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_pacsval" model="ir.actions.report">
+        <field name="name">PACSVAL</field>
+        <field name="model">payroll.print.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_pacsval</field>
+        <field name="report_file">remittance.report_pacsval</field>
+        <field name="print_report_name">'PACSVAL'</field>
+        <field name="paperformat_id" ref="paperformat_pacsval" />
+    </record>
+
+
+    <!-- ============================= PER OO ============================ -->
+    <record id="paperformat_per_oo" model="report.paperformat">
+        <field name="name">PER OO</field>
+        <field name="default" eval="False" />
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">6</field>
+        <field name="margin_bottom">6</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <!-- The 11 numeric cells of one PER OO row; expects `nums` in scope. -->
+    <template id="per_oo_numbers">
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['total'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['gsis'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['ecip'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['hdmf'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['phic'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['basic'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['pera'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['ra'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['ta'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['first'], True)" />
+        </td>
+        <td style="text-align:right; padding-right:2px;">
+            <t t-esc="fmt(nums['second'], True)" />
+        </td>
+    </template>
+
+    <template id="report_per_oo">
+        <t t-call="web.html_container">
+            <div class="page" style="font-family: Arial, sans-serif; font-size:7px;">
+                <div style="text-align:center; font-weight:bold; font-size:11px;">DEPARTMENT OF
+                    TRADE AND INDUSTRY</div>
+                <div style="text-align:center; font-weight:bold; font-size:10px;">Region 12</div>
+                <div style="text-align:center; font-weight:bold; font-size:10px; margin-bottom:5px;">
+                    <t t-esc="month_title" />
+                </div>
+                <table style="width:100%; border-collapse:collapse; table-layout:fixed;" border="1">
+                    <colgroup>
+                        <col style="width:12%;" />
+                        <col style="width:3%;" />
+                        <col style="width:3.5%;" />
+                        <col style="width:17%;" />
+                        <col style="width:7%;" />
+                        <col style="width:6.5%;" />
+                        <col style="width:4.5%;" />
+                        <col style="width:4.5%;" />
+                        <col style="width:5%;" />
+                        <col style="width:7%;" />
+                        <col style="width:5%;" />
+                        <col style="width:5%;" />
+                        <col style="width:5%;" />
+                        <col style="width:7.5%;" />
+                        <col style="width:7.5%;" />
+                    </colgroup>
+                    <thead style="display:table-header-group;">
+                        <tr style="font-weight:bold; text-align:center; background-color:#f0f0f0;">
+                            <td rowspan="2">ITEM NO.</td>
+                            <td rowspan="2">SG</td>
+                            <td rowspan="2">STEP</td>
+                            <td rowspan="2">NAME OF INCUMBENT</td>
+                            <td rowspan="2">TOTAL</td>
+                            <td rowspan="2">GSIS RLIP (12%)</td>
+                            <td rowspan="2">ECIP</td>
+                            <td rowspan="2">HDMF</td>
+                            <td rowspan="2">PHIC</td>
+                            <td rowspan="2">BASIC SALARY</td>
+                            <td rowspan="2">PERA</td>
+                            <td rowspan="2">Rep. Allowance</td>
+                            <td rowspan="2">Transpo. Allowance</td>
+                            <td colspan="2">NET TAKE HOME PAY</td>
+                        </tr>
+                        <tr style="font-weight:bold; text-align:center; background-color:#f0f0f0;">
+                            <td>1ST HALF</td>
+                            <td>2ND HALF</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="groups" t-as="grp">
+                            <tr>
+                                <td colspan="15"
+                                    style="font-weight:bold; padding:2px 3px; background-color:#f0f0f0;">
+                                    <t t-esc="grp['title']" />
+                                </td>
+                            </tr>
+                            <t t-foreach="grp['lines']" t-as="ln">
+                                <tr style="page-break-inside: avoid;">
+                                    <td
+                                        style="padding-left:2px; white-space:nowrap; overflow:hidden;">
+                                        <t t-esc="ln['item_no']" />
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <t t-esc="ln['sg']" />
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <t t-esc="ln['step']" />
+                                    </td>
+                                    <td style="padding-left:2px;">
+                                        <t t-esc="ln['name']" />
+                                    </td>
+                                    <t t-call="remittance.per_oo_numbers">
+                                        <t t-set="nums" t-value="ln" />
+                                    </t>
+                                </tr>
+                            </t>
+                            <tr style="font-weight:bold; page-break-inside: avoid;">
+                                <td colspan="3" style="padding-left:2px;">
+                                    <t t-esc="grp['label']" />
+                                </td>
+                                <td style="text-align:center;">
+                                    <t t-esc="grp['subtotal']['count']" />
+                                </td>
+                                <t t-call="remittance.per_oo_numbers">
+                                    <t t-set="nums" t-value="grp['subtotal']" />
+                                </t>
+                            </tr>
+                        </t>
+                        <tr
+                            style="font-weight:bold; background-color:#f0f0f0; page-break-inside: avoid;">
+                            <td colspan="3" style="padding-left:2px;">GRAND TOTAL - OOs</td>
+                            <td style="text-align:center;">
+                                <t t-esc="oo_total['count']" />
+                            </td>
+                            <t t-call="remittance.per_oo_numbers">
+                                <t t-set="nums" t-value="oo_total" />
+                            </t>
+                        </tr>
+                        <tr
+                            style="font-weight:bold; background-color:#f0f0f0; page-break-inside: avoid;">
+                            <td colspan="3" style="padding-left:2px;">GRAND TOTAL - GMS &amp; OOs</td>
+                            <td style="text-align:center;">
+                                <t t-esc="grand_total['count']" />
+                            </td>
+                            <t t-call="remittance.per_oo_numbers">
+                                <t t-set="nums" t-value="grand_total" />
+                            </t>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top:14px; font-size:9px; page-break-inside: avoid;"> Prepared by: <div
+                        style="margin-top:18px; font-weight:bold;">
+                        <t t-esc="data.get('oo_prepared_by')" />
+                    </div>
+                    <div>
+                        <t t-esc="data.get('oo_prepared_by_position')" />
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_per_oo" model="ir.actions.report">
+        <field name="name">PER OO</field>
+        <field name="model">payroll.print.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_per_oo</field>
+        <field name="report_file">remittance.report_per_oo</field>
+        <field name="print_report_name">'PER OO'</field>
+        <field name="paperformat_id" ref="paperformat_per_oo" />
+    </record>
+
+
+    <!-- ============================== JEV ============================== -->
+    <!-- Two copies of the voucher stacked on one portrait A4, as in the workbook. -->
+    <record id="paperformat_jev" model="report.paperformat">
+        <field name="name">JEV</field>
+        <field name="default" eval="False" />
+        <field name="format">custom</field>
+        <field name="page_width">215</field>
+        <field name="page_height">279</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="jev_form">
+        <div style="text-align:right; font-size:7px;">DTI12-FA-SF003</div>
+        <table
+            style="width:100%; height:126mm; border-collapse:collapse; table-layout:fixed; font-family: Arial, sans-serif; font-size:8px; line-height:1.15; border:1px solid #000;">
+            <colgroup>
+                <col style="width:9%;" />
+                <col style="width:41%;" />
+                <col style="width:16%;" />
+                <col style="width:7%;" />
+                <col style="width:10%;" />
+                <col style="width:17%;" />
+            </colgroup>
+            <tr>
+                <td colspan="4"
+                    style="text-align:center; font-size:15px; padding:5px 0; border:1px solid #000;">JOURNAL
+                    ENTRY VOUCHER</td>
+                <td colspan="2"
+                    style="text-align:center; font-size:15px; padding:5px 0; border:1px solid #000;">FUND
+                    101-PS</td>
+            </tr>
+            <tr>
+                <td colspan="4" rowspan="2"
+                    style="text-align:center; font-size:12px; border:1px solid #000;">Department of
+                    Trade and Industry XII</td>
+                <td
+                    style="font-weight:bold; font-size:9px; padding-left:3px; border-left:1px solid #000;">JEV
+                    No.:</td>
+                <td style="font-weight:bold; font-size:9px; border-right:1px solid #000;">
+                    <t t-esc="data.get('jev_no')" />
+                </td>
+            </tr>
+            <tr>
+                <td
+                    style="font-weight:bold; font-size:9px; padding-left:3px; border-left:1px solid #000; border-bottom:1px solid #000;">
+                    Date:</td>
+                <td
+                    style="font-weight:bold; font-size:9px;  border-right:1px solid #000; border-bottom:1px solid #000;">
+                    <t t-esc="jev_date_label" />
+                </td>
+            </tr>
+            <tr style="font-size:9px;">
+                <td style="border-left:1px solid #000;"></td>
+                <td>Collection</td>
+                <td>Check Disbursement</td>
+                <td>Cash Disbursement</td>
+                <td>Others</td>
+                <td style="border-right:1px solid #000;"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; border-right:none;"></td>
+                <td colspan="5"
+                    style="text-align:center; font-weight:bold; font-size:10px; border:1px solid #000;">ACCOUNTING
+                    ENTRIES</td>
+            </tr>
+            <tr style="text-align:center;">
+                <td rowspan="2" style="font-size:9px; border:1px solid #000;">Responsibility<br />
+                    Center</td>
+                <td rowspan="2" style="font-size:10px; border:1px solid #000;">Accounts and
+                    Explanation</td>
+                <td rowspan="2" style="font-size:10px; border:1px solid #000;">Account<br />Code</td>
+                <td colspan="3" style="font-size:10px; border:1px solid #000;">Amount</td>
+            </tr>
+            <tr style="text-align:center; font-size:9px;">
+                <td colspan="2" style="border:1px solid #000; font-size:10px;">
+                    Debit</td>
+                <td style="border:1px solid #000; font-size:10px;">Credit</td>
+            </tr>
+            <t t-foreach="lines" t-as="line">
+                <tr style="font-size:10px;">
+                    <td style="border-left:1px solid #000; border-right:1px solid #000;"></td>
+                    <td style="border-right:1px solid #000; white-space:nowrap; overflow:hidden;">
+                        <t t-if="line['indent']"></t>
+                        <t t-esc="line['label']" />
+                    </td>
+                    <td style="border-right:1px solid #000; padding-left:3px;">
+                        <t t-esc="line['code']" />
+                    </td>
+                    <td colspan="2"
+                        style="border-right:1px solid #000; text-align:right; padding-right:3px;">
+                        <t t-if="line['dr'] is not None">
+                            <t t-esc="fmt(line['dr'], True)" />
+                        </t>
+                    </td>
+                    <td style="border-right:1px solid #000; text-align:right; padding-right:3px;">
+                        <t t-if="line['cr'] is not None">
+                            <t t-esc="fmt(line['cr'], True)" />
+                        </t>
+                    </td>
+                </tr>
+            </t>
+            <tr>
+                <td style="border-left:1px solid #000; border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000; font-size:10px;">To record payment of
+                    Salaries and Pera</td>
+                <td style="border-right:1px solid #000;"></td>
+                <td colspan="2" style="border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000;"></td>
+            </tr>
+            <tr>
+                <td style="border-left:1px solid #000; border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000; font-size:10px;">payable to DTI- 12
+                    Employees/ LBP</td>
+                <td style="border-right:1px solid #000;"></td>
+                <td colspan="2" style="border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000;"></td>
+            </tr>
+            <tr>
+                <td style="border-left:1px solid #000; border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000; font-weight:bold; font-size:10px;">for the
+                    period <t
+                        t-esc="period_label" /></td>
+                <td style="border-right:1px solid #000;"></td>
+                <td colspan="2" style="border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000;"></td>
+            </tr>
+            <tr>
+                <td style="border-left:1px solid #000; border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000; font-weight:bold; font-size:10px;">DV No: <t
+                        t-esc="data.get('dv_no')" /></td>
+                <td style="border-right:1px solid #000;"></td>
+                <td colspan="2" style="border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000;"></td>
+            </tr>
+            <tr>
+                <td style="border-left:1px solid #000; border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000; font-weight:bold; font-size:10px;">ALOBS No: <t
+                        t-esc="data.get('alobs_no')" /></td>
+                <td style="border-right:1px solid #000;"></td>
+                <td colspan="2" style="border-right:1px solid #000;"></td>
+                <td style="border-right:1px solid #000;"></td>
+            </tr>
+            <tr style="font-weight:bold;">
+                <td colspan="3"
+                    style="text-align:right; padding-right:4px; border:1px solid #000; font-size:10px;">
+                    TOTAL</td>
+                <td colspan="2"
+                    style="text-align:right; padding-right:3px; border:1px solid #000; font-size:10px;">
+                    <t t-esc="fmt(total_dr)" />
+                </td>
+                <td
+                    style="text-align:right; padding-right:3px; border:1px solid #000; font-size:10px;">
+                    <t t-esc="fmt(total_cr)" />
+                </td>
+            </tr>
+            <tr style="font-size:9px;">
+                <td style="border-left:1px solid #000;"></td>
+                <td style="padding-top:2px; font-size:9px;">Prepared by:</td>
+                <td colspan="3" style="padding-top:2px; font-size:10px;">Certified by:</td>
+                <td style="padding-top:2px; border-right:1px solid #000; font-size:10px;">Check No.:</td>
+            </tr>
+            <tr style="font-weight:bold; font-size:9px;">
+                <td style="border-left:1px solid #000; padding-top:9px;"></td>
+                <td style="padding-top:9px;">
+                    <t style="font-weight:bold;" t-esc="data.get('jev_prepared_by')" />
+                </td>
+                <td colspan="3" style="padding-top:9px; white-space:nowrap;">
+                    <t t-esc="data.get('jev_certified_by')" />
+                </td>
+                <td style="border-right:1px solid #000;"></td>
+            </tr>
+            <tr style="font-size:9px;">
+                <td style="border-left:1px solid #000; border-bottom:1px solid #000;"></td>
+                <td style="border-bottom:1px solid #000;">
+                    <t t-esc="data.get('jev_prepared_by_position')" />
+                </td>
+                <td colspan="3" style="border-bottom:1px solid #000;">
+                    <t t-esc="data.get('jev_certified_by_position')" />
+                </td>
+                <td style="border-right:1px solid #000; border-bottom:1px solid #000;"></td>
+            </tr>
+        </table>
+    </template>
+
+    <template id="report_jev">
+        <t t-call="web.html_container">
+            <div class="page">
+                <div t-if="not check_ok"
+                    style="color:#c00; font-family: Arial, sans-serif; font-size:9px; margin-bottom:4px;">
+                </div>
+                <t t-call="remittance.jev_form" />
+                <div style="height:8mm;"></div>
+                <t t-call="remittance.jev_form" />
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_jev" model="ir.actions.report">
+        <field name="name">JEV</field>
+        <field name="model">payroll.print.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remittance.report_jev</field>
+        <field name="report_file">remittance.report_jev</field>
+        <field name="print_report_name">'JEV'</field>
+        <field name="paperformat_id" ref="paperformat_jev" />
+    </record>
+
+</odoo>

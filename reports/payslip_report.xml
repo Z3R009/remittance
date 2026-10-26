@@ -386,6 +386,20 @@
                 </t>
                 <t t-set="value" t-value="o.hdmf_housing" />
             </t>
+
+          <t t-call="remittance.payslip_line">
+                <t t-set="label">
+                    <span style="display:flex; justify-content:space-between; width:100%;">
+                        <span style="padding-left:40px;">- HDMF SAF</span>
+                        <span style="padding-left:100px;">
+                            <t t-esc="o.hdmf_saf_paid" />/<t
+                                t-esc="o.hdmf_saf_term" />
+                        </span>
+                    </span>
+                </t>
+                <t t-set="value" t-value="o.hdmf_saf" />
+            </t>
+
             <t t-call="remittance.payslip_line">
                 <t t-set="label">DTI-PF Contribution</t>
                 <t t-set="value" t-value="o.dti_pf_cont" />
