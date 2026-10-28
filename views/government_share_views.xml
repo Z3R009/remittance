@@ -46,6 +46,7 @@
                                 <field name="gs_hdmf_mpl" />
                                 <field name="gs_hdmf_calamity_loan" />
                                 <field name="gs_hdmf_housing" />
+                                <field name="gs_hdmf_saf" />
                             </group>
                         </page>
                         <page string="Other">
@@ -181,6 +182,7 @@
                                 <field name="rm_hdmf_mpl" />
                                 <field name="rm_hdmf_calamity_loan" />
                                 <field name="rm_hdmf_housing" />
+                                <field name="rm_hdmf_saf" />
                             </group>
                         </page>
                         <page string="Other">

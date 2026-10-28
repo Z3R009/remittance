@@ -51,7 +51,7 @@
         <t t-set="top_dept"
             t-value="recs[:1].employee_id.department_id.get_top_parent() if recs and recs[:1].employee_id.department_id else False" />
         <t t-set="payroll_no_match"
-            t-value="env['general.payroll.number'].search([('department_ids', 'in', [top_dept.id]), ('payroll_month', '=', recs[:1].payroll_month)], limit=1) if top_dept and recs else env['general.payroll.number']" />
+            t-value="env['general.payroll.number'].get_payroll_no(recs[:1].department_id or recs[:1].employee_id.department_id, recs[:1].payroll_month) if recs else env['general.payroll.number']" />
 
         <div style="font-family: Arial, sans-serif; font-size:8px;">
 

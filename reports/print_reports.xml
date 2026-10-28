@@ -129,44 +129,44 @@
 
     <!-- The 11 numeric cells of one PER OO row; expects `nums` in scope. -->
     <template id="per_oo_numbers">
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['total'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['gsis'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['ecip'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['hdmf'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['phic'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['basic'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['pera'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['ra'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['ta'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['first'], True)" />
         </td>
-        <td style="text-align:right; padding-right:2px;">
+        <td style="text-align:right; padding-right:2px; font-size:12px;">
             <t t-esc="fmt(nums['second'], True)" />
         </td>
     </template>
 
     <template id="report_per_oo">
         <t t-call="web.html_container">
-            <div class="page" style="font-family: Arial, sans-serif; font-size:7px;">
+            <div class="page" style="font-family: Arial, sans-serif; font-size:6px;">
                 <div style="text-align:center; font-weight:bold; font-size:11px;">DEPARTMENT OF
                     TRADE AND INDUSTRY</div>
                 <div style="text-align:center; font-weight:bold; font-size:10px;">Region 12</div>
@@ -193,22 +193,23 @@
                     </colgroup>
                     <thead style="display:table-header-group;">
                         <tr style="font-weight:bold; text-align:center; background-color:#f0f0f0;">
-                            <td rowspan="2">ITEM NO.</td>
-                            <td rowspan="2">SG</td>
-                            <td rowspan="2">STEP</td>
-                            <td rowspan="2">NAME OF INCUMBENT</td>
-                            <td rowspan="2">TOTAL</td>
-                            <td rowspan="2">GSIS RLIP (12%)</td>
-                            <td rowspan="2">ECIP</td>
-                            <td rowspan="2">HDMF</td>
-                            <td rowspan="2">PHIC</td>
-                            <td rowspan="2">BASIC SALARY</td>
-                            <td rowspan="2">PERA</td>
-                            <td rowspan="2">Rep. Allowance</td>
-                            <td rowspan="2">Transpo. Allowance</td>
-                            <td colspan="2">NET TAKE HOME PAY</td>
+                            <td rowspan="2" style="font-size: 12px;">ITEM NO.</td>
+                            <td rowspan="2" style="font-size: 12px;">SG</td>
+                            <td rowspan="2" style="font-size: 12px;">STEP</td>
+                            <td rowspan="2" style="font-size: 12px;">NAME OF INCUMBENT</td>
+                            <td rowspan="2" style="font-size: 12px;">TOTAL</td>
+                            <td rowspan="2" style="font-size: 12px;">GSIS RLIP (12%)</td>
+                            <td rowspan="2" style="font-size: 12px;">ECIP</td>
+                            <td rowspan="2" style="font-size: 12px;">HDMF</td>
+                            <td rowspan="2" style="font-size: 12px;">PHIC</td>
+                            <td rowspan="2" style="font-size: 12px;">BASIC SALARY</td>
+                            <td rowspan="2" style="font-size: 12px;">PERA</td>
+                            <td rowspan="2" style="font-size: 12px;">Rep. Allowance</td>
+                            <td rowspan="2" style="font-size: 12px;">Transpo. Allowance</td>
+                            <td colspan="2" style="font-size: 12px;">NET TAKE HOME PAY</td>
                         </tr>
-                        <tr style="font-weight:bold; text-align:center; background-color:#f0f0f0;">
+                        <tr
+                            style="font-weight:bold; text-align:center; background-color:#f0f0f0;  font-size:12px;">
                             <td>1ST HALF</td>
                             <td>2ND HALF</td>
                         </tr>
@@ -224,10 +225,10 @@
                             <t t-foreach="grp['lines']" t-as="ln">
                                 <tr style="page-break-inside: avoid;">
                                     <td
-                                        style="padding-left:2px; white-space:nowrap; overflow:hidden;">
+                                        style="padding-left:2px; white-space:nowrap; overflow:hidden; font-size:10px;">
                                         <t t-esc="ln['item_no']" />
                                     </td>
-                                    <td style="text-align:center;">
+                                    <td style="text-align:center; font-size:12px;">
                                         <t t-esc="ln['sg']" />
                                     </td>
                                     <td style="text-align:center;">
@@ -275,6 +276,11 @@
                         </tr>
                     </tbody>
                 </table>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
 
                 <div style="margin-top:14px; font-size:9px; page-break-inside: avoid;"> Prepared by: <div
                         style="margin-top:18px; font-weight:bold;">

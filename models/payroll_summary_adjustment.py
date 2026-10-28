@@ -30,6 +30,7 @@ CATEGORY_SELECTION = [
     ('hdmf_mpl', 'HDMF MPL'),
     ('hdmf_calamity_loan', 'HDMF Calamity'),
     ('hdmf_housing', 'HDMF Housing'),
+    ('hdmf_saf', 'HDMF SAF'),
 ]
 
 

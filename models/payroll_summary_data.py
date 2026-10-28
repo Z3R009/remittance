@@ -40,6 +40,7 @@ class PayrollSummaryData(models.AbstractModel):
             ('MPL', 'hdmf_mpl', 'refund_hdmf_mpl', 'gs_hdmf_mpl', 'rm_hdmf_mpl'),
             ('Calamity', 'hdmf_calamity_loan', 'refund_hdmf_calamity', 'gs_hdmf_calamity_loan', 'rm_hdmf_calamity_loan'),
             ('Housing', 'hdmf_housing', 'refund_hdmf_housing', 'gs_hdmf_housing', 'rm_hdmf_housing'),
+            ('SAF', 'hdmf_saf', None, 'gs_hdmf_saf', 'rm_hdmf_saf'),
         ],
     }
 

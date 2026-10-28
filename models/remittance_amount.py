@@ -49,6 +49,7 @@ class RemittanceAmount(models.Model):
     rm_hdmf_mpl = fields.Monetary(string="HDMF MPL", currency_field="currency_id")
     rm_hdmf_calamity_loan = fields.Monetary(string="Calamity", currency_field="currency_id")
     rm_hdmf_housing = fields.Monetary(string="Housing", currency_field="currency_id")
+    rm_hdmf_saf = fields.Monetary(string="SAF", currency_field="currency_id")
 
     _unique_month = models.Constraint(
         'unique(payroll_month)',

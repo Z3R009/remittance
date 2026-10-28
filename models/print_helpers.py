@@ -49,7 +49,7 @@ JEV_LINES = [
     ('Due to PAG IBIG - Premium', '2-02-01-030 01', 'cr', ['hdmf_cont1', 'hdmf_mp2']),
     ('Due to PAG IBIG - MPL/ Calamity Loan', '2-02-01-030 02', 'cr',
      ['hdmf_mpl', 'hdmf_calamity_loan']),
-    ('Due to PAG IBIG - HL', '2-02-01-030 03', 'cr', ['hdmf_housing']),
+    ('Due to PAG IBIG - HL/SAF', '2-02-01-030 03', 'cr', ['hdmf_housing', 'hdmf_saf']),
     ('Due to Philhealth', '2-02-01-040 00', 'cr', ['philhealth']),
     ('Other Payables - DTI- PF Cont., PF Loan', '2-99-99-990 00', 'cr',
      ['dti_pf_cont', 'dti_pf_loan']),
